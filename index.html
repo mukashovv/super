@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Супер Таблица — личный учёт доходов, расходов и долгов с итогами по месяцам и годам.">
+<title>Супер Таблица</title>
+<link rel="icon" href="./brand.png">
+<link rel="stylesheet" href="./app.css">
+<script defer src="./config.js"></script><script defer src="./data.js"></script><script defer src="./app.js"></script>
+</head>
+<body>
+<header class="mast"><div class="brand"><img src="./brand.png" alt="" width="35" height="35"><span>Супер Таблица</span></div><div id="account"></div></header>
+<main id="main">
+<section class="welcome"><div class="welcome-inner">
+<img class="doodle" src="./doodle.svg" width="620" height="330" alt="Нарисованная от руки финансовая тетрадь с карандашом и монетами">
+<div id="gate"><button class="primary launch" data-action="start">Попробовать бесплатно</button></div>
+</div></section>
+</main>
+<dialog id="editor"><div class="modal-head"><h2 id="dialog-title"></h2><button type="button" class="close" aria-label="Закрыть" data-action="close">×</button></div><div id="dialog-body"></div></dialog>
+<div id="notice" role="status" aria-live="polite"></div>
+<noscript>Для работы таблицы включите JavaScript в браузере.</noscript>
+</body></html>
