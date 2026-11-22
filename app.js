@@ -3,7 +3,9 @@ const F=Finance, config=window.SUPER_TABLE_CONFIG;
 const $=selector=>document.querySelector(selector);
 const main=$("#main"), accountBox=$("#account"), dialog=$("#editor"), body=$("#dialog-body");
 const welcome=main.innerHTML;
-const monthNames=Array.from({length:12},(_,i)=>new Intl.DateTimeFormat(siteLocale,{month:"long"}).format(new Date(2024,i,1)));
+const monthNames=siteLocale==="kk"
+ ? ["Қаңтар","Ақпан","Наурыз","Сәуір","Мамыр","Маусым","Шілде","Тамыз","Қыркүйек","Қазан","Қараша","Желтоқсан"]
+ : Array.from({length:12},(_,i)=>new Intl.DateTimeFormat(siteLocale,{month:"long"}).format(new Date(2024,i,1)));
 const currency=new Intl.NumberFormat(siteLocale,{maximumFractionDigits:2});
 const money=cents=>siteLocale === "ky" ? currency.format(cents/100)+" "+currencyUnit : moneyFormat.format(cents/100);
 const numberInput=cents=>cents ? String(cents/100) : "";
@@ -27,12 +29,39 @@ const icons={
 function icon(key){return '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">'+icons[key]+'</svg>';}
 function button(action,label,klass="",attrs=""){return '<button type="button" class="'+klass+'" data-action="'+action+'" '+attrs+'>'+label+'</button>';}
 function field(label,input){return '<label class="field"><span>'+label+'</span>'+input+'</label>';}
+function monthField(label,name,value,min,max="9999-12"){
+ if(siteLocale!=="kk")return field(label,'<input required type="month" name="'+name+'" min="'+esc(min)+'" max="'+max+'" value="'+esc(value)+'">');
+ const [yy,mm]=value.split("-");
+ const options=monthNames.map((label,i)=>{
+   const code=String(i+1).padStart(2,"0");
+   return '<option value="'+code+'" '+(mm===code?"selected":"")+'>'+label+'</option>';
+ }).join("");
+ return '<fieldset class="kk-month"><legend>'+label+'</legend><div class="pair">'+
+   field(tr("Месяц"),'<select required data-month-part><option value="">—</option>'+options+'</select>')+
+   field(tr("Год"),'<input required type="number" data-month-part min="'+Number(min.slice(0,4))+'" max="9999" value="'+esc(yy)+'">')+
+   '<input type="hidden" name="'+name+'" data-min="'+esc(min)+'" value="'+esc(value)+'"></div></fieldset>';
+}
+function syncMonthField(control){
+ const group=control.closest(".kk-month");
+ const month=group.querySelector("select"), year=group.querySelector('[type="number"]'), result=group.querySelector('[type="hidden"]');
+ const key=year.value+"-"+month.value;
+ const tooEarly=year.validity.valid && month.value && key<result.dataset.min;
+ month.setCustomValidity(tooEarly ? "Көрсетілген ай алғашқы төлем айынан ерте." : "");
+ result.value=month.validity.valid && year.validity.valid ? key : "";
+ if(result.name==="period" && result.value && !editItem){
+   const item=F.installments(book.debts[editKey].data,result.value,result.value)[0];
+   control.form.elements.amount.value=numberInput(item?.amount);
+ }
+}
+document.addEventListener("input",event=>{
+ if(event.target.hasAttribute("data-month-part"))syncMonthField(event.target);
+});
 function cashField(name,label,value=0,required=false){return field(label,'<input type="number" inputmode="decimal" step="0.01" min="'+(required?'0.01':'0')+'" max="99999999999" name="'+name+'" value="'+numberInput(value)+'" '+(required?"required":"")+' placeholder="0">');}
 function textField(name,label,value="",required=false){return field(label,'<input name="'+name+'" maxlength="180" value="'+esc(value)+'" '+(required?"required":"")+'>');}
 function amount(form,name){return Math.round(Number(form.get(name)||0)*100);}
 function notice(message){const node=$("#notice");node.textContent=message;node.classList.add("show");clearTimeout(flashTimer);flashTimer=setTimeout(()=>node.classList.remove("show"),4500);}
 function hint(message){const node=dialog.open?body.querySelector(".error"):main.querySelector(".error");if(node)node.textContent=message;else notice(message);}
-function modal(title,html){$("#dialog-title").textContent=title;body.innerHTML=html;if(!dialog.open)dialog.showModal();}
+function modal(title,html){dialog.classList.toggle("access-dialog",title===tr("Полный доступ"));$("#dialog-title").textContent=title;body.innerHTML=html;if(!dialog.open)dialog.showModal();}
 function formWrap(name,content,label=tr("Сохранить"),extra=""){return '<form data-form="'+name+'">'+content+'<p class="error" role="alert"></p><div class="form-actions">'+extra+'<button class="primary" type="submit">'+label+'</button></div></form>';}
 function renderGate(step){
  gate=step;const box=$("#gate");
@@ -165,7 +194,7 @@ function dayDetail(day){
       (entry.project?("<small>"+tr("Проект")+" · ")+esc(entry.project)+'</small>':"")+
       ("<small>"+tr("Доход")+" ")+money(entry.income)+(" "+tr("· Расход")+" ")+money(entry.expense)+'</small>',"day-entry",key)+'</li>';
  }).join("");
- modal(date.toLocaleDateString(siteLocale,{day:"numeric",month:"long",year:"numeric"}),
+ modal(siteLocale==="kk" ? date.getFullYear()+" жылғы "+day+" "+monthNames[date.getMonth()].toLowerCase() : date.toLocaleDateString(siteLocale,{day:"numeric",month:"long",year:"numeric"}),
    (reminders.length?("<h3>"+tr("Долги и платежи")+"</h3><ul class=\"day-payments\">")+reminders.map(r=>{
      const token=r.period||r.payments[0].id;
      const unpaidAmount=r.amount || (!r.done?r.payments.reduce((sum,p)=>sum+(p.done?0:p.amount),0):0);
@@ -395,7 +424,7 @@ function paymentEditor(paymentId,period,day){
  const selected=payment?(payment.period||""):(period||items[0]?.period||"");
  const options=new Map(items.map(item=>[item.period,item.amount]));
  if(selected && !options.has(selected))options.set(selected,0);
- const periods=regular?field(tr("За какой месяц"),'<input type="month" name="period" required min="'+esc(payment?.period && payment.period<debt.schedule.firstDate.slice(0,7)?payment.period:debt.schedule.firstDate.slice(0,7))+'" value="'+esc(selected)+'">'):options.size?field(tr("За какой платёж"),("<select name=\"period\"><option value=\"\">"+tr("Вне графика")+"</option>")+
+ const periods=regular?monthField(tr("За какой месяц"),"period",selected,payment?.period && payment.period<debt.schedule.firstDate.slice(0,7)?payment.period:debt.schedule.firstDate.slice(0,7)):options.size?field(tr("За какой платёж"),("<select name=\"period\"><option value=\"\">"+tr("Вне графика")+"</option>")+
    [...options].map(([key,amount])=>'<option value="'+esc(key)+'" data-amount="'+amount+'" '+(key===selected?"selected":"")+'>'+esc(monthName(key))+'</option>').join("")+'</select>'):"";
  editItem=payment?.id;editRev=book.debts[editKey].rev;
  modal(payment?tr("Изменить платёж"):tr("Новый платёж"),formWrap("payment",field(tr("Дата платежа"),'<input required type="date" name="date" value="'+esc(payment?.date||F.dateKey())+'">')+
@@ -503,7 +532,7 @@ async function handleAction(el){
  if(action==="jump-month"){month=key;view="month";render();return;}
  if(action==="new-month"){
   if(!book.paid){upgrade();return;}
-  modal(tr("Новая месячная вкладка"),formWrap("month",field(tr("Месяц"),'<input required type="month" min="1000-01" max="9999-12" name="month" value="'+F.nextMonth(month,1)+'">'),tr("Создать вкладку")));return;
+  modal(tr("Новая месячная вкладка"),formWrap("month",monthField(tr("Месяц"),"month",F.nextMonth(month,1),"1000-01"),tr("Создать вкладку")));return;
  }
  if(action==="subscription" || action==="renew"){subscription(action==="renew");return;}
  if(action==="upgrade"){upgrade();return;}
