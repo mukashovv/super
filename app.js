@@ -41,13 +41,22 @@ function renderGate(step){
  const preview=F.configured?"":button("local",tr("Открыть локальную таблицу"),"text-btn");
  if(step==="choice"){
    box.innerHTML='<div class="fade gate-actions">'+button("login",tr("Вход"),"primary")+button("register",tr("Регистрация"),"secondary")+'</div>'+preview;
+ }else if(step==="reset" || step==="new-password"){
+   const resetting=step==="reset";
+   const input=resetting?field(tr("Электронная почта"),'<input type="email" name="email" autocomplete="email" required>'):
+     field(tr("Новый пароль"),'<input type="password" name="password" autocomplete="new-password" minlength="8" required>')+
+     field(tr("Повторите пароль"),'<input type="password" name="confirm" autocomplete="new-password" minlength="8" required>');
+   box.innerHTML='<div class="auth-panel"><h1>'+tr("Восстановление пароля")+'</h1>'+formWrap(step,input,
+     tr(resetting?"Отправить ссылку":"Сохранить пароль"),resetting?button("login",tr("Назад"),"text-btn"):"")+'</div>';
+ }else if(step==="reset-sent"){
+   box.innerHTML='<div class="auth-panel"><p role="status">'+tr("Если аккаунт с такой почтой существует, на неё придёт ссылка для смены пароля.")+'</p>'+button("login",tr("Войти"),"secondary")+'</div>';
  }else{
    const login=step==="login";
    box.innerHTML='<div class="auth-panel fade"><h1>'+(login?tr("Вход"):tr("Регистрация"))+'</h1>'+formWrap("auth",
       field(tr("Электронная почта"),'<input name="email" type="email" required autocomplete="email" maxlength="254">')+
       field(tr("Пароль"),'<input name="password" type="password" required '+(login?"":'minlength="8"')+' autocomplete="'+(login?"current-password":"new-password")+'">')+
       (!F.configured?("<p class=\"muted\">"+tr("Облачные аккаунты появятся после подключения")+" Supabase. "+tr("Сейчас таблицу можно попробовать в этом браузере")+".</p>"):""),
-      login?tr("Войти"):tr("Зарегистрироваться"),button("start",tr("Назад"),"text-btn"))+preview+"</div>";
+      login?tr("Войти"):tr("Зарегистрироваться"),button("start",tr("Назад"),"text-btn"))+(login && F.configured?button("reset",tr("Забыли пароль?"),"text-btn"):"")+preview+"</div>";
  }
  box.querySelector("input,button")?.focus({preventScroll:true});
 }
@@ -481,7 +490,7 @@ async function handleAction(el){
  const action=el.dataset.action,key=el.dataset.key,item=el.dataset.id;
  if(action==="close"){dialog.close();return;}
  if(action==="start"){renderGate("choice");return;}
- if(action==="login"||action==="register"){renderGate(action);return;}
+ if(action==="login"||action==="register"||action==="reset"){renderGate(action);return;}
  if(action==="local"){await workspace(true);sessionStorage.setItem("st-preview-open","1");return;}
  if(action==="leave"){await F.leave();sessionStorage.removeItem("st-preview-open");home();return;}
  if(action==="retry-cloud"){await init();return;}
@@ -559,6 +568,13 @@ async function submit(form){
    if(book!==ownerBook)return;
    member.paid_until=expiry;member.active=true;dialog.close();render();
    notice((tr("Полный доступ до")+" ")+accessDate(expiry));return;
+ }
+ if(type==="reset"){
+   await F.requestReset(f.get("email").trim());renderGate("reset-sent");return;
+ }
+ if(type==="new-password" && gate==="new-password"){
+   if(f.get("password")!==f.get("confirm")){hint(tr("Пароли не совпадают."));return;}
+   await F.updatePassword(f.get("password"));await workspace();notice(tr("Пароль изменён."));return;
  }
  if(type==="auth"){
   if(!F.configured){hint(tr("Пока доступен локальный режим. Кнопка находится под формой."));return;}
@@ -700,8 +716,17 @@ setInterval(rollover,60000);document.addEventListener("visibilitychange",()=>{if
 async function init(){
  if(!F.configured){try{if(sessionStorage.getItem("st-preview-open")==="1")await workspace(true);}catch{home();}return;}
  try{
-   const signedIn=await F.openSession();
-   if(signedIn)await workspace();
+   if(siteLocale!==pageLanguage)return;
+   const fragment=new URLSearchParams(location.hash.slice(1));
+   const recovery=fragment.get("type")==="recovery";
+   const failed=fragment.has("error") || new URLSearchParams(location.search).has("error");
+   const token=recovery?fragment.get("access_token"):null;
+   const signedIn=await F.openSession(token);
+   if(recovery || failed){
+     home();
+     if(recovery && token && signedIn && !failed)renderGate("new-password");
+     else {renderGate("reset");hint(tr("Ссылка недействительна или устарела. Запросите новую."));}
+   }else if(signedIn)await workspace();
    F.observeSession(user=>{if(book && !F.local){home();if(user)run(()=>workspace());}});
  }catch{home();$("#gate").insertAdjacentHTML("beforeend",("<p class=\"error\" role=\"alert\">"+tr("Не удалось подключиться к облачной таблице")+".</p>")+button("retry-cloud",tr("Повторить подключение"),"text-btn"));}
 }

@@ -122,12 +122,13 @@ const Finance = (() => {
     return data;
   }
   async function load() { return visibleBook(local ? readLocal() : await rpc("st_book",{p_month:monthKey()})); }
-  async function openSession() {
+  async function openSession(recoveryToken) {
     await connect();
     const {data,error}=await client.auth.getSession();
     if(error) throw error;
     account=data.session?.user || null;
     local=false;
+    if(recoveryToken && data.session?.access_token!==recoveryToken)return null;
     return account;
   }
   function observeSession(fn) { client.auth.onAuthStateChange((event,session)=>{
@@ -142,6 +143,15 @@ const Finance = (() => {
     if(result.error) throw result.error;
     account=result.data.session?.user || null; local=false;
     return Boolean(account);
+  }
+  async function requestReset(email) {
+    const api=await connect();
+    const {error}=await api.auth.resetPasswordForEmail(email,{redirectTo:new URL("./",location.href).href});
+    if(error)throw error;
+  }
+  async function updatePassword(password) {
+    const {error}=await client.auth.updateUser({password});
+    if(error)throw error;
   }
   async function leave() {
     if (!local && client) { const {error}=await client.auth.signOut({scope:"local"}); if(error) throw error; }
@@ -174,7 +184,7 @@ const Finance = (() => {
     return navigator.locks ? navigator.locks.request(localKey, write) : write();
   }
   async function grantMember(member,years){return rpc("st_grant_member",{p_member:member,p_years:years});}
-  return {claimAccessNotice:()=>rpc("st_claim_access_notice",{}), configured, fullAccess, members, grantMember, startLocal, load, openSession, observeSession, authenticate, leave, save, deleteDebt,
+  return {claimAccessNotice:()=>rpc("st_claim_access_notice",{}), configured, requestReset, updatePassword, fullAccess, members, grantMember, startLocal, load, openSession, observeSession, authenticate, leave, save, deleteDebt,
     monthKey,dateKey,dateOf,nextMonth,emptyMonth,totals,allocated,balance,installments,calendarPayments,dueForPeriod,
     get local(){return local;},get email(){return account?.email || "";}};
 })();

@@ -316,6 +316,8 @@ body.month-open {
 .renew-choice:hover {background:var(--wash)}
 
 #language {width:auto;max-width:none;flex:none;min-height:32px;border:0;border-radius:6px;color:var(--ink);background:var(--wash);font-size:.8rem}
-@media(max-width:640px){#language {font-size:.72rem}.mast-actions{gap:4px}.mast .brand{min-width:0}.mast .brand span{overflow:hidden;text-overflow:ellipsis}.tabs{max-width:100%}}
+@media(max-width:640px){#language {font-size:.72rem}.mast-actions{gap:4px}.mast .brand{min-width:max-content}.mast .brand span{flex:none;overflow:visible;padding-inline-end:.08em}.tabs{max-width:100%}}
 @media(max-width:640px){#language{field-sizing:content;padding-inline:3px}.mast-actions{flex-shrink:0}}
 @media(max-width:460px){.mast:has(#language) #install-app{font-size:0;gap:0;width:30px}.mast:has(#language) #install-app svg{width:17px;height:17px}}
+
+@media(max-width:640px){.mast .brand img{flex:none;object-fit:contain}.mast{flex-wrap:wrap;row-gap:4px}.mast .brand{flex-shrink:0}}
