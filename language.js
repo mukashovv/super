@@ -1,13 +1,3 @@
-"use strict";
-const languages = {ru:"Русский",ky:"Кыргызча",en:"English",es:"Español",de:"Deutsch","pt-BR":"Português (Brasil)",fr:"Français",tr:"Türkçe",id:"Bahasa Indonesia",ja:"日本語"};
-function supportedLocale(tag) {
-  const base = String(tag || "").toLowerCase().split("-")[0];
-  return Object.keys(languages).find(key => key.split("-")[0] === base);
-}
-const currentUrl = new URL(location.href);
-let savedLanguage;
-try { savedLanguage = localStorage.getItem("supertable.language"); } catch {}
-const siteLocale = supportedLocale(currentUrl.searchParams.get("lang")) || supportedLocale(savedLanguage) || Array.from(navigator.languages || [navigator.language]).map(supportedLocale).find(Boolean) || "ru";
 const internationalBrand = !["ru","ky"].includes(siteLocale);
 const brandImage = internationalBrand ? "./s-english-192.png" : "./brand.png";
 function tr(source) {
@@ -28,9 +18,7 @@ for (const [tag,name] of Object.entries(languages)) {
 languageSelect.addEventListener("change", () => {
   const tag = languageSelect.value;
   try { localStorage.setItem("supertable.language",tag); } catch {}
-  const url = new URL(location.href);
-  url.searchParams.set("lang",tag);
-  location.replace(url.href);
+  location.replace(languageUrl(tag).href);
 });
 // Translate the static shell before the app renders any personal records.
 for (const el of document.querySelectorAll("title,.brand span,#gate button,#install-app,#install-title,noscript")) {

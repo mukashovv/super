@@ -15,7 +15,7 @@ function offlinePage(url) {
 self.addEventListener("fetch", event => {
   if (event.request.mode !== "navigate" || event.request.method !== "GET") return;
   const url = new URL(event.request.url);
-  if (url.origin !== home.origin || (url.pathname !== home.pathname && url.pathname !== entry.pathname)) return;
+  if (url.origin !== home.origin || (url.pathname !== home.pathname && url.pathname !== entry.pathname && !/^index-(ky|en|es|de|pt-BR|fr|tr|id|ja)\.html$/.test(url.pathname.slice(home.pathname.length)))) return;
   event.respondWith(fetch(event.request).catch(() => new Response(offlinePage(url), {
     status: 503,
     headers: {"Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store"}

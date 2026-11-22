@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="canonical" href="https://supertable.mukashov.com/">
+<script>
+if (location.hostname === "mukashov.com" && /^\/super_tablica(?:\/(?:index\.html)?)?$/.test(location.pathname)) {
+  location.replace("https://supertable.mukashov.com/" + location.search + location.hash);
+}
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script>
+if (navigator.maxTouchPoints > 0 && (navigator.standalone === true ||
+    (matchMedia("(display-mode: standalone)").matches && CSS.supports("-webkit-touch-callout", "none")))) {
+  document.documentElement.classList.add("ios-home-screen");
+  document.querySelector('meta[name="viewport"]').content += ",viewport-fit=cover";
+}
+</script>
+<script src="./language-route.js"></script>
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Супер Таблица — личный учёт доходов, расходов и долгов с итогами по месяцам и годам.">
+<title>SuperTable</title>
+<link rel="icon" href="./s-english-192.png">
+<link rel="manifest" href="./manifest-en.webmanifest">
+<meta name="apple-mobile-web-app-title" content="SuperTable">
+<link rel="apple-touch-icon" href="./s-english-192.png">
+<link rel="stylesheet" href="./app.css?v=english-brand-2">
+<script defer src="./translations.js?v=3"></script>
+<script defer src="./language.js?v=home-title-3"></script>
+<script defer src="./install.js?v=english-brand-2"></script>
+<script defer src="./config.js"></script><script defer src="./data.js?v=english-brand-2"></script><script defer src="./app.js?v=english-brand-2"></script>
+</head>
+<body>
+<div class="status-bar-surface" aria-hidden="true"></div>
+<header class="mast"><div class="brand"><img src="./s-english-192.png" alt="" width="35" height="35"><span>Супер Таблица</span></div>
+<div class="mast-actions"><select id="language" aria-label="Язык / Тил" title="Язык / Тил"></select><button id="install-app" type="button" hidden aria-label="Установить Супер Таблицу"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></svg>Установить</button><div id="account"></div></div></header>
+<main id="main">
+<section class="welcome"><div class="welcome-inner">
+<img class="doodle" src="./doodle.svg" width="620" height="330" alt="Нарисованная от руки финансовая тетрадь с карандашом и монетами">
+<div id="gate"><button class="primary launch" data-action="start">Попробовать бесплатно</button></div>
+</div></section>
+</main>
+<dialog id="editor"><div class="modal-head"><h2 id="dialog-title"></h2><button type="button" class="close" aria-label="Закрыть" data-action="close">×</button></div><div id="dialog-body"></div></dialog>
+<dialog id="install-help" aria-labelledby="install-title"><div class="modal-head"><h2 id="install-title">Установка Супер Таблицы</h2><form method="dialog"><button class="close" aria-label="Закрыть">×</button></form></div><p id="install-steps"></p></dialog>
+<div id="access-welcome" role="status" aria-live="polite"></div>
+<div id="notice" role="status" aria-live="polite"></div>
+<noscript>Для работы таблицы включите JavaScript в браузере.</noscript>
+</body></html>

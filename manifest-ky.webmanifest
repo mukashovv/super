@@ -1,6 +1,6 @@
 {
   "id": "./",
-  "start_url": "./?lang=ky",
+  "start_url": "./index-ky.html?lang=ky",
   "scope": "./",
   "name": "Сонун Чакмак",
   "short_name": "Сонун Чакмак",

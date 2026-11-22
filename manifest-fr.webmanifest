@@ -1,6 +1,6 @@
 {
   "id": "./",
-  "start_url": "./?lang=fr",
+  "start_url": "./index-fr.html?lang=fr",
   "scope": "./",
   "name": "SuperTable",
   "short_name": "SuperTable",
