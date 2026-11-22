@@ -5,7 +5,7 @@ const main=$("#main"), accountBox=$("#account"), dialog=$("#editor"), body=$("#d
 const welcome=main.innerHTML;
 const monthNames=Array.from({length:12},(_,i)=>new Intl.DateTimeFormat(siteLocale,{month:"long"}).format(new Date(2024,i,1)));
 const currency=new Intl.NumberFormat(siteLocale,{maximumFractionDigits:2});
-const money=cents=>currency.format(cents/100)+(" "+tr("сом"));
+const money=cents=>siteLocale === "ky" ? currency.format(cents/100)+" "+currencyUnit : moneyFormat.format(cents/100);
 const numberInput=cents=>cents ? String(cents/100) : "";
 const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const monthName=(key,year=true)=>monthNames[Number(key.slice(5))-1]+(year?" "+key.slice(0,4):"");

@@ -1,5 +1,5 @@
 "use strict";
-const languages = {ru:"Русский",ky:"Кыргызча",en:"English",es:"Español",de:"Deutsch","pt-BR":"Português (Brasil)",fr:"Français",tr:"Türkçe",id:"Bahasa Indonesia",ja:"日本語"};
+const languages = {ru:"Русский",ky:"Кыргызча",en:"English",kk:"Қазақша",es:"Español",de:"Deutsch","pt-BR":"Português (Brasil)",fr:"Français",tr:"Türkçe",id:"Bahasa Indonesia",ja:"日本語"};
 function supportedLocale(tag) {
   const base = String(tag || "").toLowerCase().split("-")[0];
   return Object.keys(languages).find(key => key.split("-")[0] === base);

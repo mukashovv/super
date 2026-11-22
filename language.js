@@ -1,7 +1,21 @@
 const internationalBrand = !["ru","ky"].includes(siteLocale);
 const brandImage = internationalBrand ? "./s-english-192.png" : "./brand.png";
+const localeCurrencies = {
+  ru:"RUB", ky:"KGS", en:"USD", kk:"KZT", es:"EUR", de:"EUR",
+  "pt-BR":"BRL", fr:"EUR", tr:"TRY", id:"IDR", ja:"JPY"
+};
+const currencyCode = localeCurrencies[siteLocale];
+const moneyFormat = new Intl.NumberFormat(siteLocale, {
+  style:"currency", currency:currencyCode, currencyDisplay:"narrowSymbol",
+  minimumFractionDigits:0, maximumFractionDigits:2
+});
+const currencyUnit = siteLocale === "ky" ? "сом" : moneyFormat.formatToParts(0).find(part => part.type === "currency").value;
 function tr(source) {
-  return siteLocale === "ky" ? kyrgyz[source] ?? source : internationalBrand ? english[source] ?? source : source;
+  const dict = siteLocale === "kk" ? kazakh : siteLocale === "ky" ? kyrgyz : internationalBrand ? english : null;
+  const label = dict?.[source] ?? source;
+  if (source === "сом") return currencyUnit;
+  if (source.endsWith(", сом")) return label.slice(0, label.lastIndexOf(",") + 1) + " " + currencyUnit;
+  return label;
 }
 document.documentElement.lang = siteLocale;
 document.querySelector(".brand img").src = brandImage;
@@ -24,6 +38,6 @@ languageSelect.addEventListener("change", () => {
 for (const el of document.querySelectorAll("title,.brand span,#gate button,#install-app,#install-title,noscript")) {
   for (const node of el.childNodes) if (node.nodeType === Node.TEXT_NODE) node.textContent = tr(node.textContent);
 }
-for (const el of document.querySelectorAll("[alt],[aria-label],meta[name=description]")) {
-  for (const attr of ["alt","aria-label","content"]) if (el.hasAttribute(attr)) el.setAttribute(attr,tr(el.getAttribute(attr)));
+for (const el of document.querySelectorAll("[alt],[aria-label],[title],meta[name=description]")) {
+  for (const attr of ["alt","aria-label","title","content"]) if (el.hasAttribute(attr)) el.setAttribute(attr,tr(el.getAttribute(attr)));
 }
