@@ -139,7 +139,7 @@ const Finance = (() => {
   async function authenticate(mode,email,password) {
     await connect();
     const result=mode==="login" ? await client.auth.signInWithPassword({email,password}) :
-      await client.auth.signUp({email,password,options:{emailRedirectTo:new URL("./",location.href).href}});
+      await client.auth.signUp({email,password,options:{data:{legal_version:"2026-11-23",legal_language:legalLocale},emailRedirectTo:new URL("./",location.href).href}});
     if(result.error) throw result.error;
     account=result.data.session?.user || null; local=false;
     return Boolean(account);

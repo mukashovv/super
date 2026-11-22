@@ -321,3 +321,10 @@ body.month-open {
 @media(max-width:460px){.mast:has(#language) #install-app{font-size:0;gap:0;width:30px}.mast:has(#language) #install-app svg{width:17px;height:17px}}
 
 @media(max-width:640px){.mast .brand img{flex:none;object-fit:contain}.mast{flex-wrap:wrap;row-gap:4px}.mast .brand{flex-shrink:0}}
+
+.legal-notice,.legal-consent,.legal-links{font-size:.8125rem;line-height:1.5;text-align:left;color:#505650}
+.legal-notice summary{cursor:pointer}.legal-notice p{margin:.65em 0}
+.legal-consent{display:flex;align-items:flex-start;gap:.6rem;margin:.7rem 0}
+.legal-consent input[type=checkbox]{appearance:auto;width:1rem;height:1rem;min-height:0;margin:.15em 0 0;flex:none}
+.legal-consent a,.legal-links a{color:inherit;text-underline-offset:.18em}
+.legal-links{display:flex;flex-wrap:wrap;gap:.35rem 1rem;border-top:1px solid #dedfda;margin-top:1.2rem;padding-top:.8rem}

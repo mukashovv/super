@@ -55,6 +55,7 @@ function renderGate(step){
    box.innerHTML='<div class="auth-panel fade"><h1>'+(login?tr("Вход"):tr("Регистрация"))+'</h1>'+formWrap("auth",
       field(tr("Электронная почта"),'<input name="email" type="email" required autocomplete="email" maxlength="254">')+
       field(tr("Пароль"),'<input name="password" type="password" required '+(login?"":'minlength="8"')+' autocomplete="'+(login?"current-password":"new-password")+'">')+
+      (login?"":registrationNotice())+
       (!F.configured?("<p class=\"muted\">"+tr("Облачные аккаунты появятся после подключения")+" Supabase. "+tr("Сейчас таблицу можно попробовать в этом браузере")+".</p>"):""),
       login?tr("Войти"):tr("Зарегистрироваться"),button("start",tr("Назад"),"text-btn"))+(login && F.configured?button("reset",tr("Забыли пароль?"),"text-btn"):"")+preview+"</div>";
  }
@@ -432,13 +433,13 @@ function subscription(offers=false){
  }).join("");
  modal(tr("Полный доступ"),'<section class="subscription-card"><div class="sub-laptop" aria-hidden="true"><div><img src="'+brandImage+'" alt=""></div></div>'+
    ("<h3>"+tr("Супер Таблица")+"</h3><p>")+(book.paid_until?(tr("Доступ до")+" ")+accessDate(book.paid_until):tr("Бессрочный доступ"))+'</p>'+
-   (book.paid_until?(offers?("<p class=\"renew-note\">"+tr("Выберите срок, чтобы запросить продление в")+" WhatsApp.</p>")+cards:button("renew",tr("Продлить подписку"),"secondary")):'')+'</section>');
+   (book.paid_until?(offers?("<p class=\"renew-note\">"+tr("Выберите срок, чтобы запросить продление в")+" WhatsApp.</p>")+cards:button("renew",tr("Продлить подписку"),"secondary")):'')+'</section>'+legalLinks());
 }
 function upgrade(){
  const url=config.paymentUrl||config.supportUrl;
  modal(tr("Полный доступ"),("<p class=\"intro\">"+tr("В бесплатной версии доступна одна месячная вкладка")+" — <b>")+esc(monthName(book.trial))+("</b>. "+tr("Подписка открывает «Долги и платежи», напоминания, новые месяцы и сравнение результатов за разные годы")+".</p>")+
  '<p class="muted">'+(F.local?tr("Сейчас вы ведёте локальную таблицу. Полный доступ привязывается к облачному аккаунту."):(tr("После подтверждения оплаты владелец активирует доступ для")+" ")+esc(F.email)+".")+'</p>'+
- (!F.local?'<p class="error" role="status"></p><div class="form-actions">'+button("refresh-plan",tr("Проверить доступ"),"secondary")+'<a class="primary" href="'+esc(url)+'" target="_blank" rel="noopener">'+(config.paymentUrl?tr("Перейти к оплате"):tr("Запросить оплату"))+'</a></div>':""));
+ (!F.local?'<p class="error" role="status"></p><div class="form-actions">'+button("refresh-plan",tr("Проверить доступ"),"secondary")+'<a class="primary" href="'+esc(url)+'" target="_blank" rel="noopener">'+(config.paymentUrl?tr("Перейти к оплате"):tr("Запросить оплату"))+'</a></div>':"")+legalLinks());
 }
 async function moveDebt(key,closing){
  const rec=book.debts[key],d=structuredClone(rec.data);
@@ -577,6 +578,7 @@ async function submit(form){
    await F.updatePassword(f.get("password"));await workspace();notice(tr("Пароль изменён."));return;
  }
  if(type==="auth"){
+  if(gate==="register" && !f.has("legalAccept")){form.reportValidity();return;}
   if(!F.configured){hint(tr("Пока доступен локальный режим. Кнопка находится под формой."));return;}
   const started=await F.authenticate(gate,f.get("email").trim(),f.get("password"));
   if(started){await workspace();}else{renderGate("login");hint(tr("Проверьте почту и подтвердите регистрацию по ссылке."));}return;
