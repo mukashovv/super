@@ -421,7 +421,7 @@ function subscription(offers=false){
    return '<a class="renew-choice" target="_blank" rel="noopener" href="'+esc(link.href)+'"><span>'+label+
      (discount?("<small>"+tr("Скидка")+" ")+discount+'%</small>':'')+'</span><b>$'+price+'</b></a>';
  }).join("");
- modal(tr("Полный доступ"),'<section class="subscription-card"><div class="sub-laptop" aria-hidden="true"><div><img src="./brand.png" alt=""></div></div>'+
+ modal(tr("Полный доступ"),'<section class="subscription-card"><div class="sub-laptop" aria-hidden="true"><div><img src="'+brandImage+'" alt=""></div></div>'+
    ("<h3>"+tr("Супер Таблица")+"</h3><p>")+(book.paid_until?(tr("Доступ до")+" ")+accessDate(book.paid_until):tr("Бессрочный доступ"))+'</p>'+
    (book.paid_until?(offers?("<p class=\"renew-note\">"+tr("Выберите срок, чтобы запросить продление в")+" WhatsApp.</p>")+cards:button("renew",tr("Продлить подписку"),"secondary")):'')+'</section>');
 }

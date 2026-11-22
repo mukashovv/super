@@ -8,10 +8,17 @@ const currentUrl = new URL(location.href);
 let savedLanguage;
 try { savedLanguage = localStorage.getItem("supertable.language"); } catch {}
 const siteLocale = supportedLocale(currentUrl.searchParams.get("lang")) || supportedLocale(savedLanguage) || Array.from(navigator.languages || [navigator.language]).map(supportedLocale).find(Boolean) || "ru";
+const internationalBrand = !["ru","ky"].includes(siteLocale);
+const brandImage = internationalBrand ? "./s-english-192.png" : "./brand.png";
 function tr(source) {
-  return siteLocale === "ky" ? kyrgyz[source] ?? source : source;
+  return siteLocale === "ky" ? kyrgyz[source] ?? source : internationalBrand ? english[source] ?? source : source;
 }
 document.documentElement.lang = siteLocale;
+document.querySelector(".brand img").src = brandImage;
+document.querySelector('link[rel="icon"]').href = brandImage;
+document.querySelector('link[rel="apple-touch-icon"]').href = internationalBrand ? "./s-english-192.png" : "./icon-192.png";
+if (siteLocale !== "ru") document.querySelector('link[rel="manifest"]').href = "./manifest-"+siteLocale+".webmanifest";
+document.querySelector('meta[name="apple-mobile-web-app-title"]').content = tr("Супер Таблица");
 const languageSelect = document.getElementById("language");
 for (const [tag,name] of Object.entries(languages)) {
   const option = new Option(name,tag,false,tag===siteLocale);

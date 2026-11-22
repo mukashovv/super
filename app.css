@@ -315,5 +315,7 @@ body.month-open {
 .renew-choice small {display:block;color:#237236}
 .renew-choice:hover {background:var(--wash)}
 
-#language {max-width:9em;min-height:32px;border:0;border-radius:6px;color:var(--ink);background:var(--wash);font-size:.8rem}
-@media(max-width:640px){#language {max-width:6.2em;font-size:.72rem}.mast-actions{gap:4px}.mast .brand{min-width:0}.mast .brand span{overflow:hidden;text-overflow:ellipsis}.tabs{max-width:100%}}
+#language {width:auto;max-width:none;flex:none;min-height:32px;border:0;border-radius:6px;color:var(--ink);background:var(--wash);font-size:.8rem}
+@media(max-width:640px){#language {font-size:.72rem}.mast-actions{gap:4px}.mast .brand{min-width:0}.mast .brand span{overflow:hidden;text-overflow:ellipsis}.tabs{max-width:100%}}
+@media(max-width:640px){#language{field-sizing:content;padding-inline:3px}.mast-actions{flex-shrink:0}}
+@media(max-width:460px){.mast:has(#language) #install-app{font-size:0;gap:0;width:30px}.mast:has(#language) #install-app svg{width:17px;height:17px}}
