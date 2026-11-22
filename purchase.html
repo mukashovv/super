@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Супер Таблица — покупка и условия. Оплата, возврат, политика конфиденциальности.">
+    <link rel="icon" href="../assets/img/super_tablica_logo.jpg" type="image/jpeg">
+    <link rel="icon" href="../assets/img/super_tablica_favicon.svg" type="image/svg+xml" sizes="any">
+    <title>Супер Таблица — покупка</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="../build/css/styles.css">
+    <style>
+        :root {
+            --font-title: "Space Grotesk", "IBM Plex Sans", sans-serif;
+            --font-body: "IBM Plex Sans", "Space Grotesk", sans-serif;
+            --ink: #1f2a37;
+            --ink-soft: #5c6674;
+            --ink-faint: #8b95a3;
+            --paper: #f6f7f9;
+            --paper-strong: #ffffff;
+            --line: #e3e7ed;
+            --sheet-green: #1f9d55;
+            --sheet-green-soft: #e8f6ee;
+            --sheet-accent: #0f766e;
+            --shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+        }
+        body {
+            background: radial-gradient(circle at top, #eef3f1 0%, #f9fafb 45%, #f2f4f8 100%);
+            color: var(--ink);
+            font-family: var(--font-body);
+        }
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .site-header,
+        .site-footer {
+            background: transparent;
+            border: none;
+        }
+        .site-header .container,
+        .site-footer .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 0;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand__mark {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: var(--sheet-green);
+            color: #fff;
+            font-weight: 700;
+            font-family: var(--font-title);
+            object-fit: cover;
+        }
+        .brand__name {
+            font-family: var(--font-title);
+            font-size: 18px;
+        }
+        .landing {
+            flex: 1;
+            padding: 40px 0 80px;
+        }
+        .intro-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+            gap: 32px;
+            align-items: start;
+        }
+        .headline {
+            font-family: var(--font-title);
+            font-size: clamp(34px, 4.2vw, 54px);
+            line-height: 1.1;
+            margin-bottom: 18px;
+        }
+        .lead {
+            font-size: 17px;
+            color: var(--ink-soft);
+            margin-bottom: 24px;
+        }
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 26px;
+        }
+        .pill {
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--sheet-green-soft);
+            color: var(--sheet-green);
+            font-weight: 500;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+        .cta-row .button {
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 12px 20px;
+        }
+        .button--primary-green {
+            background: linear-gradient(135deg, #14b86a 0%, #0f9f57 100%);
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 14px 24px rgba(16, 185, 129, 0.25);
+        }
+        .button--primary-green:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 18px 28px rgba(16, 185, 129, 0.32);
+        }
+        .button--ghost {
+            background: transparent;
+            border: 1px solid var(--line);
+            color: var(--ink);
+        }
+        .info-tiles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .tile {
+            background: var(--paper-strong);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        .tile::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0) 55%);
+            pointer-events: none;
+        }
+        .tile h3 {
+            font-family: var(--font-title);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .tile p {
+            color: var(--ink-soft);
+            font-size: 14px;
+        }
+        .tile-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: #e7f8ef;
+            color: var(--sheet-green);
+            margin-bottom: 10px;
+        }
+        .sheet-card {
+            background: var(--paper-strong);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .sheet-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--line);
+            background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .doc-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--ink);
+            font-family: var(--font-title);
+        }
+        .doc-title span {
+            font-size: 14px;
+            color: var(--ink-faint);
+            font-weight: 500;
+        }
+        .sheet-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .sheet-actions .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #cbd5f5;
+        }
+        .sheet-actions .dot:nth-child(2) {
+            background: #b6e3c2;
+        }
+        .sheet-actions .dot:nth-child(3) {
+            background: #f6d9a9;
+        }
+        .sheet-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--line);
+            font-size: 13px;
+            color: var(--ink-faint);
+        }
+        .tool-pill {
+            padding: 6px 10px;
+            border-radius: 10px;
+            background: #f1f5f9;
+            color: var(--ink-soft);
+        }
+        .sheet-grid {
+            padding: 14px 18px 20px;
+            background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+            overflow-x: auto;
+        }
+        .sheet-grid table {
+            width: 100%;
+            min-width: 540px;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .sheet-grid th,
+        .sheet-grid td {
+            border: 1px solid var(--line);
+            padding: 8px 10px;
+            text-align: left;
+        }
+        .sheet-grid th {
+            background: #f1f5f9;
+            color: var(--ink-faint);
+            font-weight: 600;
+        }
+        .sheet-grid td.highlight {
+            background: var(--sheet-green-soft);
+            color: var(--sheet-accent);
+            font-weight: 600;
+        }
+        .sheet-grid td.muted {
+            color: var(--ink-faint);
+        }
+        .sheet-footer {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 12px 18px;
+            border-top: 1px solid var(--line);
+            background: #f8fafc;
+            font-size: 13px;
+            color: var(--ink-soft);
+        }
+        .sheet-tab {
+            padding: 6px 12px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background: #ffffff;
+            box-shadow: inset 0 0 0 1px var(--line);
+        }
+        .sheet-tab.active {
+            border-color: var(--sheet-green);
+            color: var(--sheet-green);
+            font-weight: 600;
+        }
+        .trust {
+            margin-top: 24px;
+            background: var(--paper-strong);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 18px 20px;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+        }
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            align-items: center;
+        }
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .trust-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: #f1f5f9;
+            color: var(--ink);
+            font-size: 18px;
+        }
+        .trust-item strong {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .trust-item span {
+            display: block;
+            color: var(--ink-faint);
+            font-size: 13px;
+        }
+        .policy {
+            margin-top: 28px;
+            background: var(--paper-strong);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 22px;
+        }
+        .reviews {
+            margin-top: 28px;
+        }
+        .reviews h3 {
+            font-family: var(--font-title);
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .review-card {
+            background: var(--paper-strong);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+        }
+        .review-card .rating {
+            color: var(--sheet-green);
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .review-card p {
+            color: var(--ink-soft);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .review-card .author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--ink-faint);
+        }
+        .review-card .badge {
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #f1f5f9;
+            color: var(--ink-soft);
+            font-size: 11px;
+        }
+        .objections {
+            margin-top: 34px;
+            background: var(--paper-strong);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 26px;
+            box-shadow: 0 14px 26px rgba(15, 23, 42, 0.06);
+        }
+        .objections h3 {
+            font-family: var(--font-title);
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        .objections .lead {
+            margin-bottom: 18px;
+        }
+        .objections-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            gap: 22px;
+            align-items: center;
+        }
+        .objection-quote {
+            font-family: var(--font-title);
+            font-size: clamp(20px, 2.4vw, 26px);
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+        .objection-card {
+            border: 1px dashed var(--line);
+            border-radius: 18px;
+            padding: 18px;
+            background: #f8fafc;
+        }
+        .objection-list {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--ink-soft);
+            font-size: 14px;
+        }
+        .objection-list li {
+            margin-bottom: 10px;
+        }
+        .objection-media {
+            width: 100%;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: var(--paper-strong);
+            overflow: hidden;
+        }
+        .objection-media img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .features {
+            margin-top: 28px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+            gap: 22px;
+            align-items: stretch;
+        }
+        .feature-card {
+            background: var(--paper-strong);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 22px;
+        }
+        .feature-card h3 {
+            font-family: var(--font-title);
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .feature-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .feature-badge {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--sheet-green-soft);
+            color: var(--sheet-green);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .feature-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .stat-card {
+            border-radius: 14px;
+            padding: 14px;
+            background: #f8fafc;
+            border: 1px solid var(--line);
+        }
+        .stat-card strong {
+            display: block;
+            font-size: 18px;
+            font-family: var(--font-title);
+        }
+        .stat-card span {
+            color: var(--ink-faint);
+            font-size: 12px;
+        }
+        .feature-graph {
+            background: linear-gradient(180deg, #ffffff 0%, #f6f8fb 100%);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 20px;
+            display: grid;
+            gap: 12px;
+        }
+        .ai-helper {
+            margin-top: 28px;
+            background: linear-gradient(135deg, #ecfdf3 0%, #f1f5ff 45%, #ffffff 100%);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+            gap: 20px;
+            align-items: center;
+        }
+        .ai-helper h3 {
+            font-family: var(--font-title);
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .ai-helper p {
+            color: var(--ink-soft);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .ai-steps {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--ink-soft);
+            font-size: 14px;
+        }
+        .ai-steps li {
+            margin-bottom: 8px;
+        }
+        .ai-card {
+            background: var(--paper-strong);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+        }
+        .ai-card .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--sheet-green-soft);
+            color: var(--sheet-green);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .ai-card .mini-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .ai-card .mini-table th,
+        .ai-card .mini-table td {
+            border: 1px solid #c5c0d9;
+            padding: 6px 8px;
+            text-align: left;
+        }
+        .ai-card .mini-table th {
+            background: #e6e0f3;
+            color: #2f2a3f;
+            font-weight: 600;
+        }
+        .ai-card .mini-table .day-col {
+            width: 40%;
+            background: #d9d2e9;
+            color: #2f2a3f;
+            text-align: center;
+            font-weight: 600;
+        }
+        .ai-card .mini-table .today-row .day-col {
+            background: #8bc27a;
+            color: #ffffff;
+        }
+        .ai-card .mini-table .sum-col {
+            text-align: center;
+            color: var(--ink);
+        }
+        .graph-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--ink-soft);
+        }
+        .graph-bar {
+            flex: 1;
+            height: 10px;
+            border-radius: 999px;
+            background: #e2e8f0;
+            overflow: hidden;
+        }
+        .graph-bar span {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, #1f9d55 0%, #6ee7b7 100%);
+            border-radius: 999px;
+        }
+        .policy h3 {
+            font-family: var(--font-title);
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        .policy p {
+            color: var(--ink-soft);
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        .policy p:last-child {
+            margin-bottom: 0;
+        }
+        .policy-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--ink-soft);
+            font-size: 13px;
+            text-decoration: none;
+            border-bottom: 1px dashed var(--ink-faint);
+            padding-bottom: 2px;
+        }
+        .purchase-strip {
+            margin-top: 22px;
+            padding: 22px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            border: 1px solid #cce8d7;
+            border-radius: 18px;
+            background: linear-gradient(115deg, #e8f6ee 0%, #f4faf6 55%, #ffffff 100%);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+        }
+        .purchase-strip__copy h3 {
+            font-family: var(--font-title);
+            font-size: 19px;
+            line-height: 1.25;
+            margin: 0 0 5px;
+        }
+        .purchase-strip__copy p {
+            color: var(--ink-soft);
+            font-size: 14px;
+            line-height: 1.45;
+            margin: 0;
+        }
+        .purchase-strip__button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex: 0 0 auto;
+            min-height: 50px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 20;
+        }
+        .modal.is-open {
+            display: flex;
+        }
+        .modal-card {
+            max-width: 720px;
+            width: 100%;
+            background: var(--paper-strong);
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            position: relative;
+        }
+        .modal-card h3 {
+            font-family: var(--font-title);
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: #f8fafc;
+            color: var(--ink-soft);
+        }
+        .site-footer p {
+            color: var(--ink-faint);
+            font-size: 13px;
+        }
+        .site-footer {
+            border-top: 1px solid var(--line);
+        }
+        .site-footer .container {
+            gap: 18px;
+            flex-wrap: nowrap;
+        }
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 0;
+            white-space: nowrap;
+        }
+        .footer-brand__identity {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .footer-brand__icon {
+            display: block;
+            width: 42px;
+            height: 42px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .site-footer .footer-brand__text {
+            color: var(--ink-faint);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .payment-methods {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .payment-methods img {
+            display: block;
+            height: 30px;
+            width: auto;
+            flex: 0 0 auto;
+            object-fit: contain;
+        }
+        .footer-support {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .footer-support__copy {
+            min-width: 0;
+        }
+        .footer-support__copy p {
+            margin: 0;
+            white-space: nowrap;
+        }
+        .footer-support__button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .footer-social {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .footer-social__link {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: var(--paper-strong);
+            color: var(--ink);
+            font-size: 19px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .footer-social__link:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        .footer-social__link svg {
+            width: 20px;
+            height: 20px;
+            color: #f15f2c;
+        }
+        @media (max-width: 980px) {
+            .intro-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .objections-grid,
+            .features,
+            .ai-helper {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+        @media (max-width: 1120px) {
+            .site-footer .container {
+                flex-wrap: wrap;
+            }
+            .footer-support {
+                flex: 1 1 100%;
+                justify-content: flex-end;
+            }
+        }
+        @media (max-width: 640px) {
+            .container {
+                width: calc(100% - 32px);
+            }
+            .site-header {
+                padding: 0;
+            }
+            .site-header .container {
+                padding: 14px 0 8px;
+            }
+            .landing {
+                padding: 18px 0 36px;
+            }
+            .brand {
+                gap: 10px;
+            }
+            .brand__name {
+                font-size: 16px;
+            }
+            .headline {
+                font-size: clamp(28px, 8vw, 36px);
+                line-height: 1.12;
+                margin-bottom: 12px;
+            }
+            .lead {
+                font-size: 15px;
+                line-height: 1.5;
+                margin-bottom: 18px;
+            }
+            .pill-row {
+                gap: 8px;
+                margin-bottom: 18px;
+            }
+            .pill {
+                padding: 7px 10px;
+                font-size: 12px;
+            }
+            .cta-row {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 10px;
+                margin-bottom: 18px;
+            }
+            .cta-row .button {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+            .sheet-card {
+                border-radius: 16px;
+            }
+            .sheet-topbar {
+                padding: 12px 14px;
+            }
+            .doc-title {
+                flex-wrap: wrap;
+                gap: 4px 8px;
+                font-size: 14px;
+            }
+            .doc-title span {
+                font-size: 12px;
+            }
+            .sheet-toolbar {
+                gap: 7px;
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+            .tool-pill {
+                padding: 5px 8px;
+            }
+            .sheet-grid {
+                padding: 10px 12px 14px;
+            }
+            .sheet-grid table {
+                font-size: 12px;
+            }
+            .sheet-grid th,
+            .sheet-grid td {
+                padding: 7px 8px;
+            }
+            .sheet-footer {
+                gap: 7px;
+                padding: 10px 12px;
+                overflow-x: auto;
+            }
+            .sheet-tab {
+                flex: 0 0 auto;
+                padding: 5px 9px;
+            }
+            .trust,
+            .objections,
+            .feature-card,
+            .feature-graph,
+            .ai-helper,
+            .policy {
+                padding: 16px;
+                border-radius: 16px;
+            }
+            .trust-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .reviews,
+            .features,
+            .ai-helper,
+            .objections,
+            .policy {
+                margin-top: 22px;
+            }
+            .objections h3,
+            .feature-card h3,
+            .ai-helper h3 {
+                font-size: 18px;
+            }
+            .objection-card {
+                padding: 14px;
+            }
+            .objection-media {
+                border-radius: 14px;
+            }
+            .feature-stats {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .stat-card {
+                padding: 12px;
+            }
+            .feature-graph,
+            .ai-card {
+                padding: 14px;
+            }
+            .purchase-strip {
+                align-items: stretch;
+                flex-direction: column;
+                gap: 14px;
+                margin-top: 18px;
+                padding: 18px;
+                border-radius: 16px;
+            }
+            .purchase-strip__copy h3 {
+                font-size: 17px;
+            }
+            .purchase-strip__copy p {
+                font-size: 13px;
+            }
+            .purchase-strip__button {
+                width: 100%;
+                min-height: 50px;
+            }
+            .site-footer .container {
+                padding: 14px 0;
+                gap: 14px;
+            }
+            .site-footer .container,
+            .footer-support {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            .footer-brand__identity {
+                gap: 10px;
+            }
+            .site-footer .footer-brand__text {
+                white-space: normal;
+            }
+            .footer-support {
+                gap: 12px;
+            }
+            .footer-support__copy p {
+                font-size: 13px;
+                white-space: normal;
+            }
+            .footer-support__button {
+                width: 100%;
+                justify-content: center;
+            }
+            .footer-brand {
+                flex-wrap: wrap;
+            }
+            .payment-methods {
+                gap: 7px;
+                margin-left: 52px;
+            }
+            .payment-methods img {
+                height: 26px;
+            }
+            .modal-card {
+                max-height: calc(100vh - 32px);
+                overflow-y: auto;
+                padding: 20px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="site-header">
+            <div class="container">
+                <div class="brand">
+                    <img class="brand__mark" src="../assets/img/super_tablica_logo_darker.jpg" alt="" aria-hidden="true">
+                    <div class="brand__text">
+                        <span class="brand__name">Супер Таблица</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="landing">
+                <div class="container">
+                    <div class="intro-grid">
+                        <div>
+                            <div class="pill-row">
+                                <span class="pill"><i class="fas fa-check"></i>Финансовый шаблон</span>
+                                <span class="pill"><i class="fas fa-layer-group"></i>Готовые категории</span>
+                                <span class="pill"><i class="fas fa-bolt"></i>Мгновенный старт</span>
+                            </div>
+                            <h1 class="headline">Супер Таблица — система финансового контроля, где всё по полочкам и под вашим контролем</h1>
+                            <p class="lead">Соберите все доходы и расходы в одном умном файле. Минималистичный интерфейс, быстрые расчеты и аккуратные отчеты без сложных формул.</p>
+                            <div class="cta-row">
+                                <a class="button button--primary-green" href="https://boosty.to/super_tablica" target="_blank" rel="noopener">Начать вести свою таблицу уже сегодня</a>
+                                <a class="button button--ghost" href="https://wa.me/996709139603" target="_blank" rel="noopener">Задать вопрос</a>
+                            </div>
+                        </div>
+                        <div class="sheet-card">
+                            <div class="sheet-topbar">
+                                <div class="doc-title">
+                                    Супер Таблица
+                                    <span>Финансы 2026</span>
+                                </div>
+                                <div class="sheet-actions">
+                                    <span class="dot"></span>
+                                    <span class="dot"></span>
+                                    <span class="dot"></span>
+                                </div>
+                            </div>
+                            <div class="sheet-toolbar">
+                                <span class="tool-pill">Формат</span>
+                                <span class="tool-pill">Категории</span>
+                                <span class="tool-pill">Фильтр</span>
+                                <span class="tool-pill">Диаграммы</span>
+                                <span class="tool-pill">Сводка</span>
+                            </div>
+                            <div class="sheet-grid">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Дата</th>
+                                            <th>Категория</th>
+                                            <th>Описание</th>
+                                            <th>Сумма</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>05.02</td>
+                                            <td>Доход</td>
+                                            <td>Зарплата</td>
+                                            <td class="highlight">+120 000</td>
+                                        </tr>
+                                        <tr>
+                                            <td>06.02</td>
+                                            <td>Дом</td>
+                                            <td>Аренда</td>
+                                            <td>-45 000</td>
+                                        </tr>
+                                        <tr>
+                                            <td>06.02</td>
+                                            <td>Продукты</td>
+                                            <td>Супермаркет</td>
+                                            <td>-9 800</td>
+                                        </tr>
+                                        <tr>
+                                            <td>07.02</td>
+                                            <td>Транспорт</td>
+                                            <td>Такси</td>
+                                            <td>-1 600</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="muted">Итого</td>
+                                            <td class="muted" colspan="2">За неделю</td>
+                                            <td class="highlight">+63 600</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="sheet-footer">
+                                <span class="sheet-tab active">Доходы</span>
+                                <span class="sheet-tab">Расходы</span>
+                                <span class="sheet-tab">Планы</span>
+                                <span class="sheet-tab">Отчеты</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="trust">
+                        <div class="trust-grid">
+                            <div class="trust-item">
+                                <div class="trust-icon"><i class="fas fa-shield-alt"></i></div>
+                                <div>
+                                    <strong>100% безопасная сделка</strong>
+                                    <span>Ваши данные защищены</span>
+                                </div>
+                            </div>
+                            <div class="trust-item">
+                                <div class="trust-icon"><i class="fas fa-coins"></i></div>
+                                <div>
+                                    <strong>Гарантия 7 дней</strong>
+                                    <span>Вернем деньги, если не подойдет</span>
+                                </div>
+                            </div>
+                            <div class="trust-item">
+                                <div class="trust-icon"><i class="fas fa-bolt"></i></div>
+                                <div>
+                                    <strong>Мгновенный доступ</strong>
+                                    <span>Начнете сразу после оплаты</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="reviews">
+                        <h3>Отзывы</h3>
+                        <div class="review-grid">
+                            <div class="review-card">
+                                <div class="rating">★★★★★</div>
+                                <p>«Впервые вижу таблицу, где всё понятно с первого дня. Визуально очень чисто, как в Notion».</p>
+                                <div class="author">
+                                    <span class="badge">Маркетинг</span>
+                                    <span>Айжан, Бишкек</span>
+                                </div>
+                            </div>
+                            <div class="review-card">
+                                <div class="rating">★★★★★</div>
+                                <p>«Сделали семейный бюджет за вечер. Отчеты и категории спасают от хаоса».</p>
+                                <div class="author">
+                                    <span class="badge">Семья</span>
+                                    <span>Ольга, Алматы</span>
+                                </div>
+                            </div>
+                            <div class="review-card">
+                                <div class="rating">★★★★★</div>
+                                <p>«Очень нравится стиль — напоминает Google Sheets, но без перегруза».</p>
+                                <div class="author">
+                                    <span class="badge">Фриланс</span>
+                                    <span>Руслан, Москва</span>
+                                </div>
+                            </div>
+                            <div class="review-card">
+                                <div class="rating">★★★★★</div>
+                                <p>«Поддержка ответила быстро, помогли настроить под мои категории. Топ».</p>
+                                <div class="author">
+                                    <span class="badge">Предприниматель</span>
+                                    <span>Динара, Астана</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="objections">
+                        <h3>Возражения и ответы</h3>
+                        <p class="lead">Если кажется, что «у меня нет времени», значит системе как раз пора взять часть рутины на себя.</p>
+                        <div class="objections-grid">
+                            <div>
+                                <div class="objection-quote">«У меня нет времени вести финансы. Я и так завален(а) делами»</div>
+                                <div class="objection-card">
+                                    <ul class="objection-list">
+                                        <li>Супер Таблица запускается за 10–15 минут и работает автоматически после первого заполнения.</li>
+                                        <li>Вы перестаёте «платить временем» за хаос: один вечер настройки экономит часы ежемесячно.</li>
+                                        <li>Приложения для учета часто не подходят: они перегружены, требуют подписок и не дают полной картины. Таблица — проще, прозрачнее и всегда под контролем.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="objection-media">
+                                <img src="../assets/img/super_tablica_image.jpg" alt="Девушка ведет Супер Таблицу за ноутбуком дома">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="features">
+                        <div class="feature-card">
+                            <h3>Фишка Супер Таблицы — статистика по годам</h3>
+                            <div class="feature-badges">
+                                <span class="feature-badge">Годовая сводка</span>
+                                <span class="feature-badge">Просадки по месяцам</span>
+                                <span class="feature-badge">Рост дохода</span>
+                            </div>
+                            <p class="lead">Система автоматически собирает данные по каждому году: сколько вы заработали, где был пик, а в какие месяцы случалась просадка. Это помогает видеть прогресс и принимать решения без угадываний.</p>
+                            <div class="feature-stats">
+                                <div class="stat-card">
+                                    <strong>+1 420 000</strong>
+                                    <span>Доход за год</span>
+                                </div>
+                                <div class="stat-card">
+                                    <strong>Март</strong>
+                                    <span>Пик заработка</span>
+                                </div>
+                                <div class="stat-card">
+                                    <strong>Август</strong>
+                                    <span>Просадка</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="feature-graph">
+                            <div class="graph-row">
+                                Январь
+                                <div class="graph-bar"><span style="width: 62%;"></span></div>
+                                62%
+                            </div>
+                            <div class="graph-row">
+                                Март
+                                <div class="graph-bar"><span style="width: 95%;"></span></div>
+                                95%
+                            </div>
+                            <div class="graph-row">
+                                Июнь
+                                <div class="graph-bar"><span style="width: 48%;"></span></div>
+                                48%
+                            </div>
+                            <div class="graph-row">
+                                Август
+                                <div class="graph-bar"><span style="width: 32%;"></span></div>
+                                32%
+                            </div>
+                            <div class="graph-row">
+                                Декабрь
+                                <div class="graph-bar"><span style="width: 76%;"></span></div>
+                                76%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-helper">
+                        <div>
+                            <h3>Умный фокус на сегодняшнюю дату</h3>
+                            <p>Вам не нужно искать сегодняшний день или листать месяцы вручную. Встроенный искусственный интеллект сам подсветит текущую дату и при наступлении нового месяца покажет нужный лист.</p>
+                            <ul class="ai-steps">
+                                <li>Автопереход к актуальному месяцу.</li>
+                                <li>Подсветка текущего дня для быстрого ввода.</li>
+                                <li>Вы просто вносите учет и планируете расходы — без лишних движений.</li>
+                            </ul>
+                        </div>
+                        <div class="ai-card">
+                            <div class="badge"><i class="fas fa-magic"></i> AI-подсказки</div>
+                            <table class="mini-table" aria-label="Пример дня и суммы">
+                                <thead>
+                                    <tr>
+                                        <th class="day-col">День</th>
+                                        <th class="sum-col">Сумма</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="day-col">1</td>
+                                        <td class="sum-col">10 500</td>
+                                    </tr>
+                                    <tr class="today-row">
+                                        <td class="day-col">2</td>
+                                        <td class="sum-col">3 500</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="day-col">3</td>
+                                        <td class="sum-col">2 500</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="day-col">4</td>
+                                        <td class="sum-col">—</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="day-col">5</td>
+                                        <td class="sum-col">—</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="info-tiles" style="margin-top: 28px;">
+                        <div class="tile">
+                            <div class="tile-icon"><i class="fas fa-credit-card"></i></div>
+                            <h3>Оплата</h3>
+                            <p>Карты Visa/Mastercard, перевод по номеру телефона, безналичный счет для компаний. Реквизиты отправим в WhatsApp.</p>
+                        </div>
+                        <div class="tile">
+                            <div class="tile-icon"><i class="fas fa-undo-alt"></i></div>
+                            <h3>Возврат</h3>
+                            <p>Если таблица не подошла — напишите нам в течение 7 дней, и мы вернем оплату после проверки файла.</p>
+                        </div>
+                        <div class="tile">
+                            <div class="tile-icon"><i class="fas fa-paper-plane"></i></div>
+                            <h3>Доступ</h3>
+                            <p>Сразу после оплаты получите ссылку на скачивание и инструкцию в WhatsApp или на почту.</p>
+                        </div>
+                    </div>
+                    <div class="purchase-strip">
+                        <div class="purchase-strip__copy">
+                            <h3>Купить таблицу сейчас</h3>
+                            <p>Начните наводить порядок в финансах уже сегодня — настройка займёт всего 10–15 минут.</p>
+                        </div>
+                        <a class="button button--primary-green purchase-strip__button" href="https://boosty.to/super_tablica" target="_blank" rel="noopener">
+                            Купить таблицу <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    <div class="policy">
+                        <a class="policy-link" href="#" data-modal-open>Политика конфиденциальности</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-brand">
+                    <div class="footer-brand__identity">
+                        <img class="footer-brand__icon" src="../assets/img/super_tablica_logo.jpg" alt="Супер Таблица">
+                        <p class="footer-brand__text">Супер Таблица. Финансы под контролем.</p>
+                    </div>
+                    <div class="payment-methods" role="group" aria-label="Принимаем оплату картами МИР, Visa и Mastercard, а также через СБП">
+                        <img src="../assets/img/visa_mastercard.png" alt="МИР, Visa и Mastercard">
+                        <img src="../assets/img/sbp.png" alt="Система быстрых платежей">
+                    </div>
+                </div>
+                <div class="footer-support">
+                    <div class="footer-support__copy">
+                        <p>Мы рядом и готовы поддержать — задавайте любые вопросы.</p>
+                    </div>
+                    <a class="button button--primary-green footer-support__button" href="https://wa.me/996709139603" target="_blank" rel="noopener">
+                        <i class="fab fa-whatsapp" aria-hidden="true"></i>Служба заботы
+                    </a>
+                    <nav class="footer-social" aria-label="Мы в социальных сетях">
+                        <a class="footer-social__link" href="https://boosty.to/super_tablica" target="_blank" rel="noopener" aria-label="Boosty">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2.661 14.337 6.801 0h6.362L11.88 4.444l-.038.077-3.378 11.733h3.15c-1.321 3.289-2.35 5.867-3.086 7.733-5.816-.063-7.442-4.228-6.02-9.155M8.554 24l7.67-11.035h-3.25l2.83-7.073c4.852.508 7.137 4.33 5.791 8.952C20.16 19.81 14.344 24 8.68 24h-.127z"/></svg>
+                        </a>
+                        <a class="footer-social__link" href="https://instagram.com/super_tablica" target="_blank" rel="noopener" aria-label="Instagram">
+                            <i class="fab fa-instagram" aria-hidden="true"></i>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <div class="modal" id="policy-modal" aria-hidden="true">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="policy-title">
+            <button class="modal-close" type="button" aria-label="Закрыть" data-modal-close>
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 id="policy-title">Политика конфиденциальности</h3>
+            <p>1. Общие положения. Мы уважаем вашу конфиденциальность и обрабатываем персональные данные только в объеме, необходимом для оформления покупки, доставки файла и поддержки.</p>
+            <p>2. Какие данные собираем. Имя, контактный номер, электронная почта, данные о платеже и выбранной версии продукта. Мы не храним полные данные банковских карт.</p>
+            <p>3. Цели обработки. Связь с покупателем, подтверждение оплаты, отправка доступа к таблице, поддержка, возврат средств при необходимости.</p>
+            <p>4. Хранение и защита. Данные хранятся ограниченный срок и защищаются организационными и техническими мерами. Доступ к данным имеют только уполномоченные лица.</p>
+            <p>5. Передача третьим лицам. Мы не передаем данные третьим лицам, кроме платежных провайдеров и сервисов связи, необходимых для исполнения заказа.</p>
+            <p>6. Отзыв согласия. Вы можете запросить удаление данных, написав на support@mukashov.com. Мы обработаем запрос в разумный срок.</p>
+            <p>7. Контакты. По вопросам обработки данных пишите на support@mukashov.com.</p>
+        </div>
+    </div>
+    <script>
+        const modal = document.getElementById("policy-modal");
+        const openBtn = document.querySelector("[data-modal-open]");
+        const closeBtn = document.querySelector("[data-modal-close]");
+
+        const openModal = () => {
+            modal.classList.add("is-open");
+            modal.setAttribute("aria-hidden", "false");
+        };
+
+        const closeModal = () => {
+            modal.classList.remove("is-open");
+            modal.setAttribute("aria-hidden", "true");
+        };
+
+        openBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            openModal();
+        });
+
+        closeBtn.addEventListener("click", closeModal);
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

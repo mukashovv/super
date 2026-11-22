@@ -59,8 +59,8 @@ body.month-open {
 .sheet-totals dd {margin:0;font-weight:650;font-size:.85rem}
 .month-sheet {display:grid;grid-template-rows:auto minmax(0,1fr);font-variant-numeric:tabular-nums}
 .sheet-labels,.sheet-day {display:grid;grid-template-columns:var(--sheet-columns)}
-.sheet-labels,.week-labels {background:#eff3ee;color:#425043;font-weight:600;font-size:.78rem}
-.sheet-labels span,.week-labels span {padding:3px 8px;border-right:1px solid var(--grid-line);border-bottom:1px solid var(--grid-line)}
+.sheet-labels,.mobile-sheet-labels {background:#eff3ee;color:#425043;font-weight:600;font-size:.78rem}
+.sheet-labels span,.mobile-sheet-labels span {padding:3px 8px;border-right:1px solid var(--grid-line);border-bottom:1px solid var(--grid-line)}
 .sheet-labels span:nth-child(n+4) {text-align:right}
 .sheet-labels span:last-child,.sheet-status {text-align:center}
 .sheet-body {display:grid;grid-template-rows:repeat(var(--days),minmax(0,1fr))}
@@ -82,7 +82,7 @@ body.month-open {
 .sheet-day.is-today .sheet-date {box-shadow:inset 3px 0 #416d49;color:#244f2f;background:#e8f1e7}
 .sheet-day:hover {box-shadow:inset 0 0 0 1px #97aa96}
 .sheet-day:focus-visible {outline-offset:-2px;z-index:1}
-.week-labels,.sheet-day .calendar-net {display:none}
+.mobile-sheet-labels,.sheet-day .mobile-day-info,.sheet-day .mobile-day-net {display:none}
 .day-entries {list-style:none;margin:0;padding:0}
 .day-entries li {display:flex;align-items:center;gap:10px;padding:8px;border-bottom:1px solid var(--rule)}
 .day-entries .check {flex:none}
@@ -91,25 +91,25 @@ body.month-open {
 .day-entry small,.day-entry span {color:var(--soft);margin-top:3px}
 .allocation-preview:not(:empty) {margin:10px 0 16px;font-size:.9rem}
 
-/* A week grid keeps each date readable on narrow or short screens. */
+/* Keep the same chronological rows on a narrow screen. */
 @media(max-width:740px),(max-height:660px) {
-  .sheet-labels,.sheet-day .sheet-text,.sheet-day .sheet-number,.sheet-day .sheet-status,.sheet-date small {display:none}
-  .week-labels {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center}
-  .sheet-body {
-    grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(var(--weeks),minmax(0,1fr));
-    background:var(--wash);
-  }
-  .sheet-day {
-    display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;
-    gap:3px;border-right:1px solid var(--grid-line);padding:clamp(2px,1vh,9px) 4px 1px;
-    font-size:clamp(.8rem,2.2dvh,1rem);
-  }
-  .sheet-day:first-child {grid-column-start:var(--start)}
-  .sheet-day > span {border:0;padding:0 2px}
-  .sheet-date,.sheet-day.finished .sheet-date {background:transparent}
-  .sheet-day.is-today {box-shadow:inset 0 0 0 2px #416d49}
-  .sheet-day.is-today .sheet-date {background:transparent;box-shadow:none}
-  .sheet-day .calendar-net {display:block;font-size:.74em;color:#445345;line-height:1.2}
+  .month-sheet {--mobile-columns:3.2rem minmax(0,1fr) minmax(4.8rem,22%)}
+  .mobile-sheet-labels,.sheet-day {display:grid;grid-template-columns:var(--mobile-columns)}
+  .sheet-labels,.sheet-day .sheet-text,.sheet-day .sheet-number,.sheet-day .sheet-status,
+  .month-sheet .sheet-day .sheet-reminder {display:none}
+  .mobile-sheet-labels span {padding:2px 5px}
+  .mobile-sheet-labels span:last-child,.mobile-day-net {text-align:right}
+  .sheet-day {font-size:clamp(.64rem,1.65dvh,.92rem)}
+  .sheet-day > span {padding-inline:5px}
+  .sheet-date {display:flex;align-items:center;justify-content:space-between}
+  .sheet-date small {margin:0}
+  .sheet-day .mobile-day-info {display:flex;gap:5px;align-items:center}
+  .mobile-day-info > span {min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .mobile-day-info > span:empty {display:none}
+  .mobile-day-payment {color:#765017}
+  .mobile-day-payment .payment-badge:not(.paid) {background:#fff1d6}
+  .mobile-day-note:has(+ .mobile-day-payment:not(:empty)) {max-width:48%}
+  .sheet-day .mobile-day-net {display:block}
 }
 @media(max-width:600px) {
   .month-open .mast {padding:4px 8px}
@@ -130,7 +130,6 @@ body.month-open {
   .month-open .tabs .nav-item {min-height:27px}
   .sheet-tools {padding-block:1px}
   .sheet-totals {padding-block:2px}
-  .sheet-day {gap:0;padding-top:1px}
 }
 .workbook-open:not(.month-open) .desk {padding-bottom:78px}
 .workbook-open:not(.month-open) .tabs {
@@ -151,3 +150,170 @@ body.month-open {
   .workbook-open:not(.month-open) .nav-item,.workbook-open:not(.month-open) .tabs .plan-label {font-size:.74rem}
   .member-panel td:nth-child(2),.member-panel th:nth-child(2) {display:none}
 }
+
+.mast-actions {display:flex;align-items:center;min-width:0;gap:clamp(4px,1.5vw,16px)}
+#account:empty {display:none}
+#install-app {display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:32px;padding:4px 8px;border-radius:7px;color:var(--ink);font-size:.82rem}
+#install-app:hover {background:#f2f3f2}
+#install-app[hidden] {display:none}
+#install-steps {line-height:1.55}
+@media(max-width:580px){
+  .mast-actions:has(#install-app:not([hidden])) .account-label {display:none}
+  #install-app {padding-inline:4px;font-size:.76rem}
+}
+
+.debt-actions {display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+.debt-next {margin-top:8px;font-size:.86rem}
+.debt-schedule {min-width:0;margin:8px 0 16px;padding:14px;border:1px solid var(--rule);border-radius:10px}
+.debt-schedule legend {padding:0 4px;font-weight:600}
+.debt-schedule > p {margin-bottom:12px}
+.debt-schedule .pair .field {min-width:0;margin-bottom:0}
+.sheet-reminder {display:none}
+.has-reminders {--sheet-columns:5rem minmax(0,1.3fr) minmax(0,1.2fr) repeat(3,minmax(0,.8fr)) 4rem minmax(7rem,1.4fr)}
+.has-reminders .sheet-reminder {display:block;align-content:center;color:#765017;font-size:.9em}
+.has-reminders .sheet-labels span:last-child {text-align:left}
+
+
+.debt-card {position:relative}
+.debt-card h3 {padding-inline-end:28px;overflow-wrap:anywhere}
+.delete-corner {position:absolute;top:3px;right:3px;width:34px;height:34px;display:grid;place-items:center;border-radius:7px;color:#697069}
+.delete-corner svg {width:14px;height:14px;pointer-events:none}
+.delete-corner:hover,.delete-corner:focus-visible {color:#953832;background:#fbefed}
+.recurring-lane {margin-bottom:16px}
+.recurring-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:10px}
+.recurring-card {cursor:default}
+@media(max-width:600px){
+  .section-top:has([data-action="new-recurring"]) {flex-wrap:wrap}
+  .section-top:has([data-action="new-recurring"]) .actions {flex-wrap:wrap}
+  .delete-corner {width:40px;height:40px}
+}
+
+@media (orientation:landscape) and (max-height:500px) {
+  body.month-open {
+    grid-template-columns:clamp(10rem,27vw,15rem) minmax(0,1fr);
+    grid-template-rows:auto auto auto minmax(0,1fr);
+  }
+  .month-open main,.month-open .desk,.month-open .content {display:contents}
+  .month-open .mast {grid-area:1/1;flex-wrap:wrap;gap:2px;padding:3px 5px}
+  .month-open .mast .account-label {display:none}
+  .month-open .sheet-tools {grid-area:2/1;flex-wrap:wrap}
+  .month-open .sheet-tools select {flex-basis:100%;max-width:100%}
+  .month-open .sheet-totals {grid-area:3/1;display:grid;grid-template-columns:1fr;gap:1px;padding:4px 6px}
+  .month-open .sheet-totals div {display:flex;justify-content:space-between}
+  .month-open .tabs {grid-area:4/1;align-self:end;flex-wrap:wrap;justify-content:flex-start;padding-inline:3px}
+  .month-open .tabs .plan-label {margin:0}
+  .month-sheet {grid-area:1/2/-1/3;border-left:1px solid var(--grid-line)}
+  .sheet-day {font-size:clamp(8px,2.55dvh,12px);line-height:1}
+}
+
+.status-bar-surface {display:none}
+.ios-home-screen body {
+  --status-space:max(8px,env(safe-area-inset-top,0px));
+  --header-background:#fff;
+  padding-top:var(--status-space);
+  padding-left:env(safe-area-inset-left,0px);
+  padding-right:env(safe-area-inset-right,0px);
+}
+.ios-home-screen body.month-open {--header-background:#f5f7f3}
+.ios-home-screen .mast {background:var(--header-background)}
+/* Give the system status bar a solid surface above the header controls. */
+.ios-home-screen .status-bar-surface {
+  display:block;position:fixed;inset:0 0 auto;height:var(--status-space);
+  z-index:4;pointer-events:none;background:var(--header-background);
+}
+@media(max-width:760px) {
+  .ios-home-screen .welcome {min-height:calc(100svh - 68px - var(--status-space))}
+}
+
+@media (max-width:760px), (pointer:coarse) {
+  #editor .pair {grid-template-columns:repeat(2,minmax(0,1fr))}
+  #editor .pair > *, #editor .field, #editor fieldset {min-inline-size:0}
+  #editor input:is([type="date"],[type="month"]) {
+    display:block;
+    min-inline-size:0;
+    inline-size:100%;
+    max-inline-size:100%;
+    box-sizing:border-box;
+  }
+  @supports (-webkit-touch-callout:none) {
+    #editor input:is([type="date"],[type="month"]) {
+      -webkit-appearance:none;
+      appearance:none;
+    }
+    #editor input::-webkit-date-and-time-value {min-width:0;text-align:start}
+  }
+}
+
+.entry-source > label {display:block;margin-bottom:7px;font-size:.87rem;font-weight:550;white-space:nowrap}
+.source-control {
+  display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);
+  border:1px solid #ced1c8;border-radius:8px;background:white;
+}
+.source-control input:not([type=checkbox]),.source-control select {
+  min-width:0;min-height:41px;border:0;background:transparent;
+}
+.source-control :focus-visible {outline-offset:-2px}
+.source-project {position:relative;min-width:0;border-inline-start:1px solid #ced1c8}
+.source-project select {appearance:none;-webkit-appearance:none;padding-inline:8px 24px;text-overflow:ellipsis}
+.source-project::after {
+  content:"";position:absolute;right:10px;top:50%;height:6px;width:6px;
+  border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:translateY(-70%) rotate(45deg);pointer-events:none;
+}
+.source-project input[name=project]:not([hidden]) {
+  position:absolute;inset:0 24px 0 0;width:calc(100% - 24px);padding-inline:8px 1px;
+  border-radius:0;background:white;
+}
+.source-project input[hidden] {display:none}
+.source-project:has(input:not([hidden])) select {color:transparent}
+.source-project select option {color:var(--ink)}
+.project-breakdown {display:flex;align-items:center;flex-wrap:wrap;gap:18px 28px;padding:0 20px 20px}
+.project-pie {width:clamp(100px,15vw,146px);aspect-ratio:1;border-radius:50%;flex:none}
+.project-breakdown ul {min-width:0;flex:1 1 260px;margin:0;padding:0;list-style:none}
+.project-breakdown li {display:grid;grid-template-columns:10px minmax(0,1fr) auto 4em;align-items:baseline;gap:8px;padding:6px 0;border-bottom:1px solid var(--rule);font-variant-numeric:tabular-nums}
+.project-breakdown li:last-child {border-bottom:0}
+.project-breakdown li i {width:9px;height:9px;border-radius:50%}
+.project-breakdown li span {overflow-wrap:anywhere}
+.project-breakdown li small {text-align:right;color:var(--soft)}
+.project-empty {padding:0 20px 18px}
+@media(max-width:500px){
+  .project-breakdown {padding:0 14px 14px;justify-content:center}
+  .project-breakdown li {font-size:.86rem}
+}
+
+
+@media (max-width:760px) {
+  #editor .modal-head {margin-bottom:14px}
+  #editor .field {margin-bottom:11px}
+  #editor .debt-schedule .pair .field {margin-bottom:0}
+  #editor .field > span, #editor .entry-source > label {margin-bottom:5px}
+  #editor form .form-actions {margin-top:10px}
+}
+
+.payment-badge {padding-inline:3px;border-radius:2px}
+.payment-badge.paid {color:#237236;background:transparent}
+.day-payments {list-style:none;margin:6px 0 12px;padding:0}
+.day-payments li {padding:2px 0;border-bottom:1px solid var(--rule)}
+.day-payment-row {display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:9px;text-align:left;border-radius:5px;overflow-wrap:anywhere}
+.day-payment-row[aria-pressed=true] {background:var(--done);color:#294b36}
+.day-payment-row .check {flex:none}
+.day-payment-row small {display:block;margin:3px 0;color:var(--soft)}
+.day-payment-row[aria-pressed=true] small {color:inherit}
+
+#access-welcome {position:fixed;z-index:10;left:50%;top:max(24px,env(safe-area-inset-top));transform:translate(-50%,-12px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s,transform .25s,visibility .25s;width:max-content;max-width:90vw;background:white;color:var(--ink);padding:16px 22px;border:1px solid var(--rule);border-radius:16px;box-shadow:0 6px 30px #2222;text-align:center}
+#access-welcome.visible {visibility:visible;opacity:1;transform:translate(-50%,0)}
+#editor:has(.subscription-card) {width:min(92vw,390px);background:rgba(255,255,255,.96);backdrop-filter:blur(15px)}
+#editor:has(.subscription-card)::backdrop {backdrop-filter:blur(4px)}
+.subscription-card {text-align:center}
+.sub-laptop {width:150px;margin:32px auto 25px}
+.sub-laptop div {display:grid;place-items:center;aspect-ratio:1.56;background:linear-gradient(145deg,#d6e0e6,#92aabe 60%,#697c91);border:5px solid #26292d;border-radius:7px 7px 3px 3px}
+.sub-laptop img {width:28px;height:28px;border-radius:6px}
+.sub-laptop::after {content:"";display:block;height:6px;margin:0 -15px;background:linear-gradient(#d7d8da,#85888b);border-radius:0 0 55% 55%}
+.subscription-card h3 {font-size:1.4rem}
+.subscription-card p {margin:7px 0 20px;color:var(--soft)}
+.subscription-card .renew-note {font-size:.88rem;margin:22px 0 8px}
+.renew-choice {display:flex;justify-content:space-between;align-items:center;min-height:44px;text-align:left;color:var(--ink);text-decoration:none;border-top:1px solid var(--rule);padding:9px 6px}
+.renew-choice small {display:block;color:#237236}
+.renew-choice:hover {background:var(--wash)}
+
+#language {max-width:9em;min-height:32px;border:0;border-radius:6px;color:var(--ink);background:var(--wash);font-size:.8rem}
+@media(max-width:640px){#language {max-width:6.2em;font-size:.72rem}.mast-actions{gap:4px}.mast .brand{min-width:0}.mast .brand span{overflow:hidden;text-overflow:ellipsis}.tabs{max-width:100%}}
