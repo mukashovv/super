@@ -74,6 +74,139 @@ const legalCopy = {
     "accept": "{terms} қабылдаймын және {privacy} таныстым.",
     "terms": "Пайдалану шарттарын",
     "privacy": "Құпиялық саясатымен"
+  },
+  "es": {
+    "names": [
+      "Política de privacidad",
+      "Condiciones de uso",
+      "Aviso sobre asesoramiento financiero",
+      "Gestión y eliminación de datos"
+    ],
+    "heading": "Privacidad y responsabilidad",
+    "paragraphs": [
+      "SuperTable te ayuda a llevar tus propias cuentas y a mejorar tu bienestar financiero.",
+      "Adoptamos medidas técnicas y organizativas razonables para proteger tus datos. Ningún servicio en línea puede garantizar una seguridad absoluta.",
+      "Tú decides sobre tus finanzas. SuperTable no ofrece asesoramiento personalizado de inversión, bancario ni de otro tipo profesional.",
+      "La Política de privacidad explica cómo tratamos tus datos personales.",
+      "Al registrarte, aceptas las Condiciones de uso y confirmas que has leído la Política de privacidad."
+    ],
+    "accept": "Acepto las {terms} y he leído la {privacy}.",
+    "terms": "Condiciones de uso",
+    "privacy": "Política de privacidad"
+  },
+  "de": {
+    "names": [
+      "Datenschutzerklärung",
+      "Nutzungsbedingungen",
+      "Hinweis zur Finanzberatung",
+      "Daten verwalten und löschen"
+    ],
+    "heading": "Datenschutz und Verantwortung",
+    "paragraphs": [
+      "SuperTable hilft dir, deine Finanzen selbst zu verwalten und dein finanzielles Wohlergehen zu verbessern.",
+      "Wir schützen deine Daten mit angemessenen technischen und organisatorischen Maßnahmen. Kein Onlinedienst kann absolute Sicherheit garantieren.",
+      "Für deine finanziellen Entscheidungen bist du selbst verantwortlich. SuperTable bietet keine individuelle Anlage-, Bank- oder sonstige professionelle Finanzberatung.",
+      "Unsere Datenschutzerklärung erläutert, wie wir personenbezogene Daten verarbeiten.",
+      "Mit der Registrierung akzeptierst du die Nutzungsbedingungen und bestätigst, die Datenschutzerklärung gelesen zu haben."
+    ],
+    "accept": "Ich akzeptiere die {terms} und habe die {privacy} gelesen.",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutzerklärung"
+  },
+  "pt-BR": {
+    "names": [
+      "Política de Privacidade",
+      "Termos de Uso",
+      "Aviso sobre orientação financeira",
+      "Gestão e exclusão de dados"
+    ],
+    "heading": "Privacidade e responsabilidade",
+    "paragraphs": [
+      "O SuperTable ajuda você a controlar suas finanças pessoais e a melhorar seu bem-estar financeiro.",
+      "Adotamos medidas técnicas e organizacionais razoáveis para proteger seus dados. Nenhum serviço online pode garantir segurança absoluta.",
+      "Você responde pelas suas decisões financeiras. O SuperTable não oferece consultoria individual de investimentos, bancária ou outra orientação financeira profissional.",
+      "Nossa Política de Privacidade explica como tratamos os dados pessoais.",
+      "Ao se cadastrar, você aceita os Termos de Uso e confirma que leu a Política de Privacidade."
+    ],
+    "accept": "Aceito os {terms} e li a {privacy}.",
+    "terms": "Termos de Uso",
+    "privacy": "Política de Privacidade"
+  },
+  "fr": {
+    "names": [
+      "Politique de confidentialité",
+      "Conditions d’utilisation",
+      "Avertissement financier",
+      "Gestion et suppression des données"
+    ],
+    "heading": "Confidentialité et responsabilité",
+    "paragraphs": [
+      "SuperTable vous aide à suivre vos finances personnelles et à améliorer votre bien-être financier.",
+      "Nous prenons des mesures techniques et organisationnelles raisonnables pour protéger vos données. Aucun service en ligne ne peut garantir une sécurité absolue.",
+      "Vos décisions financières relèvent de votre responsabilité. SuperTable ne fournit aucun conseil personnalisé en matière de placement, de banque ou de finances.",
+      "Notre politique de confidentialité explique comment nous traitons vos données personnelles.",
+      "En vous inscrivant, vous acceptez les conditions d’utilisation et confirmez avoir lu la politique de confidentialité."
+    ],
+    "accept": "J’accepte les {terms} et j’ai lu la {privacy}.",
+    "terms": "conditions d’utilisation",
+    "privacy": "politique de confidentialité"
+  },
+  "tr": {
+    "names": [
+      "Gizlilik Politikası",
+      "Kullanım Koşulları",
+      "Finansal Danışmanlık Hakkında Açıklama",
+      "Verileri Yönetme ve Silme"
+    ],
+    "heading": "Gizlilik ve sorumluluk",
+    "paragraphs": [
+      "SuperTable kişisel mali durumunuzu takip etmenize ve finansal refahınızı iyileştirmenize yardımcı olur.",
+      "Verilerinizi korumak için makul teknik ve idari önlemler alırız. Hiçbir çevrimiçi hizmet mutlak güvenliği garanti edemez.",
+      "Finansal kararlarınızdan siz sorumlusunuz. SuperTable kişiye özel yatırım, bankacılık veya başka bir profesyonel finans danışmanlığı sunmaz.",
+      "Kişisel verileri nasıl işlediğimiz Gizlilik Politikamızda açıklanır.",
+      "Kaydolarak Kullanım Koşullarını kabul eder ve Gizlilik Politikasını okuduğunuzu onaylarsınız."
+    ],
+    "accept": "{terms} belgesini kabul ediyor ve {privacy} belgesini okuduğumu onaylıyorum.",
+    "terms": "Kullanım Koşulları",
+    "privacy": "Gizlilik Politikası"
+  },
+  "id": {
+    "names": [
+      "Kebijakan Privasi",
+      "Ketentuan Penggunaan",
+      "Penyangkalan Nasihat Keuangan",
+      "Kelola dan Hapus Data"
+    ],
+    "heading": "Privasi dan tanggung jawab",
+    "paragraphs": [
+      "SuperTable membantu Anda mencatat keuangan pribadi dan meningkatkan kesejahteraan finansial.",
+      "Kami mengambil langkah teknis dan organisasi yang wajar untuk melindungi data Anda. Tidak ada layanan daring yang dapat menjamin keamanan mutlak.",
+      "Anda bertanggung jawab atas keputusan keuangan Anda. SuperTable tidak memberikan konsultasi investasi, perbankan, atau nasihat keuangan profesional lainnya yang bersifat pribadi.",
+      "Kebijakan Privasi kami menjelaskan cara kami memproses data pribadi.",
+      "Dengan mendaftar, Anda menerima Ketentuan Penggunaan dan menyatakan telah membaca Kebijakan Privasi."
+    ],
+    "accept": "Saya menyetujui {terms} dan telah membaca {privacy}.",
+    "terms": "Ketentuan Penggunaan",
+    "privacy": "Kebijakan Privasi"
+  },
+  "ja": {
+    "names": [
+      "プライバシーポリシー",
+      "利用規約",
+      "金融助言に関する免責事項",
+      "データの管理と削除"
+    ],
+    "heading": "プライバシーと責任について",
+    "paragraphs": [
+      "SuperTableは、個人の家計管理と経済的な暮らしの改善を支援するツールです。",
+      "ユーザーのデータを保護するため、合理的な技術的・組織的措置を講じます。オンラインサービスで絶対的な安全性を保証することはできません。",
+      "金銭に関する判断はご自身の責任で行ってください。SuperTableは、投資、銀行取引、その他の金融分野について個別の専門的助言を提供しません。",
+      "個人データの取り扱いはプライバシーポリシーに記載しています。",
+      "登録することで、利用規約に同意し、プライバシーポリシーを確認したことになります。"
+    ],
+    "accept": "{terms}に同意し、{privacy}を確認しました。",
+    "terms": "利用規約",
+    "privacy": "プライバシーポリシー"
   }
 };
 const legalLocale = Object.prototype.hasOwnProperty.call(legalCopy,siteLocale) ? siteLocale : "en";
