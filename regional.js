@@ -9,7 +9,6 @@ const RP = (() => {
  const btn=(action,text,extra='')=>button('regional-'+action,t(text),'secondary',extra);
  const input=(name,value='',type='text',extra='')=>'<input name="'+name+'" type="'+type+'" value="'+h(value)+'" '+extra+'>';
  const select=(name,values,current)=>'<select name="'+name+'">'+values.map(([id,text])=>'<option value="'+h(id)+'" '+(id===current?'selected':'')+'>'+h(text)+'</option>').join('')+'</select>';
- const planSelect=current=>select('plan',Object.keys(labels).slice(0,4).map(id=>[id,label(id)]),current);
  const date=value=>value?new Date(value).toLocaleString(siteLocale):'—';
  const isoDay=value=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Bishkek',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value));
  async function offers(){
@@ -30,21 +29,19 @@ const RP = (() => {
   if(F.local||!book.manager)return;
   catalog=await call('catalog'); const summary=await call('summary');
   rows=await call('admin_list',{p_search:search,p_filter:filter,p_offset:offset});
-  modal(t('Платежи и подписки'),'<div class="regional-admin"><p role="status">'+t('Ожидает проверки')+': <b>'+summary.pending+'</b> · '+t('Скоро истекает')+': <b>'+summary.due+'</b></p>'+formWrap('regional-search',field(t('Поиск'),input('search',search,'search','maxlength="254"'))+field(t('Статус'),select('filter',[['all',t('Все')],['pending',label('pending')],['active',label('active')],['expired',label('expired')],['revoked',label('revoked')],['rejected',label('rejected')],['review',t('Проверить ежемесячную оплату')],['due',t('Скоро истекает')]],filter)),t('Найти'))+'<div class="form-actions">'+btn('manual','Предоставить доступ вручную')+btn('settings','Настройки оплаты')+'</div>'+rows.slice(0,50).map(r=>'<article class="regional-record"><strong>'+h(r.account_email)+'</strong><p>'+h(r.boosty_email||'—')+' · '+h(r.method)+'<br>'+h(label(r.plan))+' · '+h(label(r.effective_status))+'<br>'+t('Доступ до')+': '+h(date(r.expires_at))+'</p>'+btn('edit','Управление','data-key="'+r.id+'"')+'</article>').join('')+(rows.length?'':'<p>'+t('Нет заявок')+'</p>')+'<div class="form-actions">'+btn('prev','Назад',offset?'':'disabled')+btn('next','Далее',rows.length>50?'':'disabled')+'</div></div>');
+  modal(t('Платежи и подписки'),'<div class="regional-admin"><p role="status">'+t('Ожидает проверки')+': <b>'+summary.pending+'</b> · '+t('Скоро истекает')+': <b>'+summary.due+'</b></p>'+formWrap('regional-search',field(t('Поиск'),input('search',search,'search','maxlength="254"'))+field(t('Статус'),select('filter',[['all',t('Все')],['pending',label('pending')],['active',label('active')],['expired',label('expired')],['revoked',label('revoked')],['rejected',label('rejected')],['review',t('Проверить ежемесячную оплату')],['due',t('Скоро истекает')]],filter)),t('Найти'))+'<div class="form-actions">'+btn('settings','Настройки оплаты')+'</div>'+rows.slice(0,50).map(r=>'<article class="regional-record"><strong>'+h(r.account_email)+'</strong><p>'+h(r.boosty_email||'—')+' · '+h(r.method)+'<br>'+h(label(r.plan))+' · '+h(label(r.effective_status))+'<br>'+t('Доступ до')+': '+h(date(r.expires_at))+'</p>'+btn('edit','Управление','data-key="'+r.id+'"')+'</article>').join('')+(rows.length?'':'<p>'+t('Нет заявок')+'</p>')+'<div class="form-actions">'+btn('prev','Назад',offset?'':'disabled')+btn('next','Далее',rows.length>50?'':'disabled')+'</div></div>');
  }
  async function editor(id){
   selected=rows.find(r=>r.id===id); if(!selected)return;
   const r=selected,history=await call('history',{p_id:id});
   const actions=r.status==='pending'?[['confirm',t('Подтвердить покупку')],['reject',t('Отклонить заявку')]]:r.status==='active'?[['extend',t('Продлить подписку')],['set_expiry',t('Изменить срок доступа')],['revoke',t('Отозвать доступ')]]:[['revoke',t('Отозвать доступ')]];
-  modal(t('Управление оплатой'),'<p><b>'+h(r.account_email)+'</b><br>'+h(r.boosty_email||'—')+' · '+h(label(r.plan))+' · '+h(r.method)+'</p><p>'+t('Дата заявки')+': '+h(date(r.created_at))+'<br>'+t('Дата подтверждения')+': '+h(date(r.confirmed_at))+'<br>'+t('Последняя оплата')+': '+h(date(r.last_payment_at))+'<br>'+t('Идентификатор покупки')+': '+h(r.purchase_id||'—')+'</p>'+changeForm(actions,r)+ '<details><summary>'+t('История изменений')+'</summary>'+history.map(a=>'<p>'+h(date(a.at))+' · '+h(t(actionLabels[a.action]||a.action))+'<br>'+h(a.details?.after?.comment||'')+'</p>').join('')+'</details>');
+  modal(t('Управление оплатой'),'<p><b>'+h(r.account_email)+'</b><br>'+h(r.boosty_email||'—')+' · '+h(label(r.plan))+' · '+h(r.method)+'</p><p>'+t('Дата заявки')+': '+h(date(r.created_at))+'<br>'+t('Дата подтверждения')+': '+h(date(r.confirmed_at))+'<br>'+t('Последняя оплата')+': '+h(date(r.last_payment_at))+'</p>'+changeForm(actions,r)+ '<details><summary>'+t('История изменений')+'</summary>'+history.map(a=>'<p>'+h(date(a.at))+' · '+h(t(actionLabels[a.action]||a.action))+'<br>'+h(a.details?.after?.comment||'')+'</p>').join('')+'</details>');
  }
  const actionLabels={submitted:'Заявка отправлена',confirm:'Подтвердить покупку',reject:'Отклонить заявку',revoke:'Отозвать доступ',extend:'Продлить подписку',set_expiry:'Изменить срок доступа',manual:'Предоставить доступ вручную'};
- function changeForm(actions,r={}){
+ function changeForm(actions,r){
   const end=new Date(Math.max(Date.now(),r.status==='active'?(Date.parse(r.expires_at)||0):0));end.setUTCMonth(end.getUTCMonth()+(catalog.find(p=>p.id===r.plan)?.months||1));
-  return formWrap('regional-change',(!r.id?field(t('Email аккаунта SuperTable'),input('email','','email','required'))+field(t('Email аккаунта Boosty'),input('boosty_email','','email'))+field(t('Тариф'),planSelect('monthly'))+field(t('Способ оплаты'),select('method',[['whatsapp','WhatsApp'],['boosty','Boosty']],'whatsapp')):'')+
+  return formWrap('regional-change',
    field(t('Действие'),select('action',actions,actions[0][0]))+field(t('Дата окончания доступа'),input('expires_at',isoDay(end),'date','required'))+field(t('Дата оплаты'),input('paid_at',isoDay(Date.now()),'date'))+
-   field(t('Идентификатор покупки'),input('purchase_id','','text','maxlength="200"'))+'<p class="muted">'+t('Укажите ID транзакции. Если его нет — профиль покупателя и оплаченный период как уникальную ссылку проверки.')+'</p>'+
-   field(t('Подтверждение проверки'),'<textarea name="verification" maxlength="2000">'+h(r.verification||'')+'</textarea>')+
    field(t('Комментарий администратора'),'<textarea name="comment" maxlength="2000">'+h(r.comment||'')+'</textarea>'),t('Сохранить'));
  }
  async function settings(){
@@ -55,7 +52,6 @@ const RP = (() => {
   const a=el.dataset.action.slice(9);
   if(a==='offers')return offers();if(a==='activate')return activation();if(a==='admin')return admin();
   if(a==='edit')return editor(el.dataset.key);
-  if(a==='manual'){selected=null;catalog=await call('catalog');modal(t('Предоставить доступ вручную'),changeForm([['manual',t('Зафиксировать ручную оплату')]]));return;}
   if(a==='settings')return settings();
   if(a==='prev'){offset=Math.max(0,offset-50);return admin();}if(a==='next'){offset+=50;return admin();}
  }
@@ -73,7 +69,7 @@ const RP = (() => {
   if(kind==='regional-plan'){await call('configure',{p:{...f,price:Number(f.price)}});form.reset();notice(t('Сохранено'));return settings();}
  }
  function error(message){
-  const errors={RATE_LIMIT:'Слишком много попыток. Повторите через час.',EMAIL_REQUIRED:'Укажите email аккаунта Boosty',ALREADY_PENDING:'У вас уже есть заявка. Ожидайте проверки.',INVALID_CODE:'Неверный код активации',REGIONAL_NOT_READY:'Активация ещё настраивается. Напишите в WhatsApp.',VERIFICATION_REQUIRED:'Укажите дату оплаты, срок, идентификатор покупки и подтверждение проверки.',PURCHASE_USED:'Эта покупка уже использована.',BAD_STATE:'Статус заявки изменился. Обновите список.',BAD_INPUT:'Проверьте заполненные поля.',AUTH_REQUIRED:'Для активации войдите в облачный аккаунт'};
+  const errors={BOOSTY_EMAIL_USED:'Эта почта Boosty уже привязана к другому аккаунту.',RATE_LIMIT:'Слишком много попыток. Повторите через час.',EMAIL_REQUIRED:'Укажите email аккаунта Boosty',ALREADY_PENDING:'У вас уже есть заявка. Ожидайте проверки.',INVALID_CODE:'Неверный код активации',REGIONAL_NOT_READY:'Активация ещё настраивается. Напишите в WhatsApp.',VERIFICATION_REQUIRED:'Укажите дату оплаты, срок, идентификатор покупки и подтверждение проверки.',PURCHASE_USED:'Эта покупка уже использована.',BAD_STATE:'Статус заявки изменился. Обновите список.',BAD_INPUT:'Проверьте заполненные поля.',AUTH_REQUIRED:'Для активации войдите в облачный аккаунт'};
   return Object.entries(errors).find(([key])=>message.includes(key))?.[1];
  }
  document.addEventListener('change',e=>{if(e.target.name==='kind'&&e.target.closest('[data-form="regional-activate"]')){const b=document.getElementById('regional-code');b.hidden=e.target.value!=='long';b.querySelector('input').required=!b.hidden;}});
