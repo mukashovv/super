@@ -451,25 +451,8 @@ async function showAccessWelcome(){
    }
  }catch(error){console.warn(tr("Не удалось проверить уведомление о подписке"),error);}
 }
-function subscription(offers=false){
- if(!F.fullAccess(book)){upgrade();return;}
- const terms=[[1,tr("1 год"),20,0],[3,tr("3 года"),48,20],[5,tr("5 лет"),65,35]];
- const cards=terms.map(([years,label,price,discount])=>{
-   const link=new URL(config.supportUrl);
-   link.searchParams.set("text",(tr("Хочу продлить подписку «Супер Таблица» на")+" ")+label+(" "+tr("за $"))+price+(tr(". Аккаунт")+" ")+F.email);
-   return '<a class="renew-choice" target="_blank" rel="noopener" href="'+esc(link.href)+'"><span>'+label+
-     (discount?("<small>"+tr("Скидка")+" ")+discount+'%</small>':'')+'</span><b>$'+price+'</b></a>';
- }).join("");
- modal(tr("Полный доступ"),'<section class="subscription-card"><div class="sub-laptop" aria-hidden="true"><div><img src="'+brandImage+'" alt=""></div></div>'+
-   ("<h3>"+tr("Супер Таблица")+"</h3><p>")+(book.paid_until?(tr("Доступ до")+" ")+accessDate(book.paid_until):tr("Бессрочный доступ"))+'</p>'+
-   (book.paid_until?(offers?("<p class=\"renew-note\">"+tr("Выберите срок, чтобы запросить продление в")+" WhatsApp.</p>")+cards:button("renew",tr("Продлить подписку"),"secondary")):'')+'</section>'+legalLinks());
-}
-function upgrade(){
- const url=config.paymentUrl||config.supportUrl;
- modal(tr("Полный доступ"),("<p class=\"intro\">"+tr("В бесплатной версии доступна одна месячная вкладка")+" — <b>")+esc(monthName(book.trial))+("</b>. "+tr("Подписка открывает «Долги и платежи», напоминания, новые месяцы и сравнение результатов за разные годы")+".</p>")+
- '<p class="muted">'+(F.local?tr("Сейчас вы ведёте локальную таблицу. Полный доступ привязывается к облачному аккаунту."):(tr("После подтверждения оплаты владелец активирует доступ для")+" ")+esc(F.email)+".")+'</p>'+
- (!F.local?'<p class="error" role="status"></p><div class="form-actions">'+button("refresh-plan",tr("Проверить доступ"),"secondary")+'<a class="primary" href="'+esc(url)+'" target="_blank" rel="noopener">'+(config.paymentUrl?tr("Перейти к оплате"):tr("Запросить оплату"))+'</a></div>':"")+legalLinks());
-}
+function subscription(){return RP.offers();}
+function upgrade(){return RP.offers().catch(()=>hint(tr("Действие не завершено. Проверьте подключение и настройки доступа, затем повторите попытку.")));}
 async function moveDebt(key,closing){
  const rec=book.debts[key],d=structuredClone(rec.data);
  if(Boolean(d.closed)===closing)return;
@@ -504,7 +487,7 @@ function membersView(){
  }).join("");
  const prev=button("members-prev",tr("Назад"),"secondary small",memberOffset?"":"disabled");
  const next=button("members-next",tr("Далее"),"secondary small",memberPage.length>memberPageSize?"":"disabled");
- return heading(tr("Участники"))+ ("<div class=\"panel member-panel\"><div class=\"table-wrap\"><table><thead><tr><th>"+tr("Почта")+"</th><th>"+tr("Регистрация")+"</th><th>"+tr("Полный доступ")+"</th><th>"+tr("Действие")+"</th></tr></thead><tbody>")+rows+'</tbody></table></div>'+
+ return heading(tr("Участники"))+button("regional-admin",tr("Платежи и подписки"),"secondary")+ ("<div class=\"panel member-panel\"><div class=\"table-wrap\"><table><thead><tr><th>"+tr("Почта")+"</th><th>"+tr("Регистрация")+"</th><th>"+tr("Полный доступ")+"</th><th>"+tr("Действие")+"</th></tr></thead><tbody>")+rows+'</tbody></table></div>'+
    (memberPage.length?"":("<p class=\"muted\">"+tr("Нет зарегистрированных пользователей")+".</p>"))+
    (memberOffset || memberPage.length>memberPageSize?'<div class="member-pages">'+prev+("<span>"+tr("Страница")+" ")+(memberOffset/memberPageSize+1)+'</span>'+next+'</div>':"")+'</div>';
 }
@@ -518,6 +501,7 @@ function grantDialog(member){
 
 async function handleAction(el){
  const action=el.dataset.action,key=el.dataset.key,item=el.dataset.id;
+ if(action.startsWith("regional-")){await RP.action(el);return;}
  if(action==="close"){dialog.close();return;}
  if(action==="start"){renderGate("choice");return;}
  if(action==="login"||action==="register"||action==="reset"){renderGate(action);return;}
@@ -534,8 +518,8 @@ async function handleAction(el){
   if(!book.paid){upgrade();return;}
   modal(tr("Новая месячная вкладка"),formWrap("month",monthField(tr("Месяц"),"month",F.nextMonth(month,1),"1000-01"),tr("Создать вкладку")));return;
  }
- if(action==="subscription" || action==="renew"){subscription(action==="renew");return;}
- if(action==="upgrade"){upgrade();return;}
+ if(action==="subscription" || action==="renew"){await subscription(action==="renew");return;}
+ if(action==="upgrade"){await upgrade();return;}
  if(action==="refresh-plan"){book=await F.load();render();if(book.paid){dialog.close();showAccessWelcome();}else hint(tr("Оплата пока ожидает подтверждения"));return;}
  if(action==="day"){dayDetail(Number(el.dataset.day));return;}
  if(action==="entry"){entryEditor(Number(el.dataset.day),item);return;}
@@ -584,6 +568,7 @@ async function handleAction(el){
 }
 async function submit(form){
  const f=new FormData(form),type=form.dataset.form;
+ if(type.startsWith("regional-")){await RP.submit(form);return;}
  if(type==="delete-debt"){
    await F.deleteDebt(editKey,editRev);
    delete book.debts[editKey];
@@ -687,7 +672,8 @@ async function run(task){
  if(busy)return;busy=true;document.body.classList.add("working");
  try{if(!checkExpiry())await task();}catch(error){
   const message=String(error.message||error);
-  if(message.includes("STALE_VERSION")){
+  if(RP.error(message)){hint(tr(RP.error(message)));}
+  else if(message.includes("STALE_VERSION")){
     try{book=await F.load();if(dialog.open)dialog.close();render();notice(tr("Данные изменились в другом окне. Загружена свежая версия. Повторите изменение."));}catch{hint(tr("Не удалось обновить таблицу. Проверьте подключение."));}
   }else if(message.includes("MONTH_LIMIT") || message.includes("SUBSCRIPTION_REQUIRED")){
     lockSubscription();upgrade();

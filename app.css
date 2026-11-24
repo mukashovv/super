@@ -335,3 +335,6 @@ body.month-open {
 .access-dialog .legal-links{flex-direction:column;align-items:center;text-align:center}
 .kk-month{min-inline-size:0;border:0;padding:0;margin:0}
 .kk-month legend{margin-bottom:.4rem}
+
+/* Regional checkout retains the workbook's existing controls and palette. */
+.regional-plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.regional-plan{border:1px solid var(--line,#ddd);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}.regional-plan h3,.regional-plan p{margin:0}.regional-plan strong{font-size:1.5rem}.regional-plan p{font-size:.9rem;line-height:1.5;flex:1}.regional-plan a{text-align:center}.regional-whatsapp{display:block;text-align:center;margin-top:16px}.regional-status,.regional-record{padding:14px 0;border-bottom:1px solid #ddd;overflow-wrap:anywhere}.regional-status span{font-size:.9rem}.regional-admin form{margin:16px 0}.regional-admin .form-actions{flex-wrap:wrap}.regional-payments hr{border:0;border-top:1px solid #ddd;margin:24px 0}#dialog-body details{margin:18px 0}#dialog-body summary{cursor:pointer;font-weight:600}#dialog-body textarea{width:100%;min-height:80px;box-sizing:border-box}@media(max-width:480px){.regional-plans{grid-template-columns:1fr}.regional-plan{padding:14px}.regional-admin .form-actions>*{width:100%}}

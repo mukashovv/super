@@ -12,7 +12,7 @@ const moneyFormat = new Intl.NumberFormat(siteLocale, {
 const currencyUnit = siteLocale === "ky" ? "сом" : moneyFormat.formatToParts(0).find(part => part.type === "currency").value;
 function tr(source) {
   const dict = siteLocale === "kk" ? kazakh : siteLocale === "ky" ? kyrgyz : typeof pageTranslations !== "undefined" ? pageTranslations : internationalBrand ? english : null;
-  const label = dict?.[source] ?? source;
+  const label = regionalTranslations[siteLocale]?.[source] ?? dict?.[source] ?? source;
   if (source === "сом") return currencyUnit;
   if (source.endsWith(", сом")) return label.slice(0, label.lastIndexOf(",") + 1) + " " + currencyUnit;
   return label;
