@@ -351,8 +351,8 @@ function debtView(){
      const attrs='data-key="'+esc(key)+'"';
      const next=F.installments(d)[0];
      return '<article class="debt-card '+(closed?"done-card":"")+'" draggable="true" data-debt="'+esc(key)+'" data-open-debt="'+esc(key)+'" tabindex="0">'+deleteCorner(key,d.name)+'<h3>'+button("debt-detail",esc(d.name),"entry-link",attrs)+("</h3><span class=\"muted\">"+tr("Осталось")+"</span><strong>")+money(b)+'</strong><div class="meter"><i style="width:'+Math.min(100,(1-b/total)*100)+("%\"></i></div><div class=\"card-foot\"><span>"+tr("Внесено")+" ")+money(total-b)+(" "+tr("из")+" ")+money(total)+'</span>'+button("move-debt",closed?tr("Вернуть"):tr("Завершить"),"text-btn",attrs)+'</div>'+
-       (next?("<p class=\"debt-next\">"+tr("Платёж до")+" ")+displayDate(next.dueDate)+' · '+money(next.amount)+'</p>':"")+
-       '<div class="debt-actions">'+(!closed && b>0?button("record-payment",tr("Внесено"),"secondary small",attrs):"")+button("edit-debt",tr("Редактировать"),"text-btn",attrs)+'</div></article>';
+       (next?("<p class=\"debt-next\">"+tr("Платить до")+" ")+displayDate(next.dueDate)+' · '+money(next.amount)+'</p>':"")+
+       '</article>';
    }).join("")+(cards.length?"":'<div class="lane-empty">'+(closed?tr("Сюда можно перенести погашенный долг."):tr("Добавьте долг, чтобы вести график платежей."))+'</div>')+'</section>';
  }
  const recurringCards=regular.map(([key,{data}])=>{
@@ -360,8 +360,8 @@ function debtView(){
    const next=F.installments(data)[0];
    return '<article class="debt-card recurring-card" data-open-debt="'+esc(key)+'" tabindex="0">'+deleteCorner(key,data.name)+'<h3>'+button("debt-detail",esc(data.name),"entry-link",attrs)+'</h3>'+
      '<strong>'+money(data.schedule.amount)+("</strong><span class=\"muted\">"+tr("в месяц")+"</span>")+
-     (next?("<p class=\"debt-next\">"+tr("Платёж до")+" ")+displayDate(next.dueDate)+' · '+money(next.amount)+'</p>':"")+
-     '<div class="debt-actions">'+button("record-payment",tr("Внесено"),"secondary small",attrs)+button("edit-debt",tr("Редактировать"),"text-btn",attrs)+'</div></article>';
+     (next?("<p class=\"debt-next\">"+tr("Платить до")+" ")+displayDate(next.dueDate)+' · '+money(next.amount)+'</p>':"")+
+      '</article>';
  }).join("");
  return heading(tr("Долги и платежи"),button("new-debt",icon("plus")+tr("Добавить долг"),"primary")+button("new-recurring",tr("Регулярный платёж"),"secondary")+button("payment-history",tr("История платежей"),"text-btn"))+
  stats([[tr("Сумма активных долгов"),money(active.reduce((s,[,r])=>s+r.data.principal+(r.data.interest||0),0))],[tr("Осталось погасить"),money(remaining)]])+
@@ -391,7 +391,7 @@ function debtEditor(key){
  (!rec?cashField("already",tr("Уже погашено, сом")):"")+
  ("<fieldset class=\"debt-schedule\"><legend>"+tr("Ежемесячный платёж")+"</legend><p class=\"muted\">"+tr("Для напоминаний укажите первый платёж по графику и количество платежей начиная с этой даты")+".</p>")+
  field(tr("Дата первого платежа"),'<input type="date" name="firstDate" min="1000-01-01" max="9999-12-31" value="'+esc(d.schedule?.firstDate)+'">')+
- '<div class="pair">'+cashField("monthly",tr("Платёж в месяц, сом"),d.schedule?.amount)+field(tr("Срок, мес."),'<input type="number" name="term" min="1" max="1200" step="1" value="'+esc(d.schedule?.months)+'">')+'</div>'+reminderOption(d)+'</fieldset>'));
+ '<div class="pair">'+cashField("monthly",tr("Платёж в месяц, сом"),d.schedule?.amount)+field(tr("Срок, мес."),'<input type="number" name="term" min="1" max="1200" step="1" value="'+esc(d.schedule?.months)+'">')+'</div>'+reminderOption(d)+'<p class="muted">'+tr('Без отметки напоминание появится за 4 дня до оплаты')+'.</p></fieldset>'));
 }
 function paymentCheck(payment,attrs){
  const label=payment.done?tr("Снять отметку «Внесено»"):tr("Отметить как внесённый");
@@ -424,8 +424,8 @@ function detail(key){
  const next=nextDebtPayment(d);
  modal(d.name,(regular?("<p class=\"muted\">"+tr("Ежемесячный платёж")+"</p><p class=\"big-money\">")+money(d.schedule.amount)+'</p>':
  ("<p class=\"muted\">"+tr("Остаток долга")+"</p><p class=\"big-money\">")+money(F.balance(d))+("</p><p class=\"muted\">"+tr("Сумма долга")+" ")+money(d.principal+(d.interest||0))+'</p>')+
- ("<div class=\"panel-head\"><h3>"+tr("История платежей")+"</h3>")+(!d.closed?button("payment",tr("＋ Платёж"),"secondary small"):"")+'</div>'+
- '<ul class="payments">'+(previous?'<li class="paid"><span>'+tr('Предыдущий платёж')+'<small>'+esc(displayDate(previous.date))+'</small></span><b>'+money(previous.amount)+'</b>'+button('payment',tr('Изменить'),'text-btn','data-id="'+esc(previous.id)+'"')+'</li>':'')+(next?'<li>'+button('complete-next','','check','data-key="'+esc(key)+'" aria-label="'+tr('Отметить как внесённый')+'" aria-pressed="false"')+'<span>'+tr('Запланирован')+'<small>'+esc(displayDate(next.date||next.dueDate))+'</small></span><b>'+money(next.amount)+'</b></li>':'')+'</ul>'+(!previous&&!next?'<p class="muted">'+tr('Пока нет платежей')+'</p>':'')+
+ ("<div class=\"panel-head\"><h3>"+tr("История платежей")+"</h3>")+(!d.closed?button("payment",tr("＋ Внести платеж"),"secondary small"):"")+'</div>'+
+ '<ul class="payments">'+(previous?'<li class="paid"><span class="payment-done-mark" aria-hidden="true">'+icon('check')+'</span><span>'+tr('Предыдущий платёж')+'<small>'+esc(displayDate(previous.date))+'</small></span><b>'+money(previous.amount)+'</b>'+button('payment',tr('Изменить'),'text-btn','data-id="'+esc(previous.id)+'"')+'</li>':'')+(next?'<li>'+button('complete-next','','check','data-key="'+esc(key)+'" aria-label="'+tr('Отметить как внесённый')+'" aria-pressed="false"')+'<span>'+tr('Запланирован')+'<small>'+esc(displayDate(next.date||next.dueDate))+'</small></span><b>'+money(next.amount)+'</b></li>':'')+'</ul>'+(!previous&&!next?'<p class="muted">'+tr('Пока нет платежей')+'</p>':'')+
  '<p class="error" role="alert"></p><div class="form-actions">'+button("edit-debt",regular?tr("Изменить регулярный платёж"):tr("Изменить долг"),"text-btn")+(regular?"":button("move-debt",d.closed?tr("Вернуть в активные"):tr("Перенести в выполнено"),"secondary",'data-key="'+key+'"'))+'</div>');
 }
 function paymentEditor(paymentId,period,day){
@@ -773,3 +773,15 @@ async function init(){
  }catch{home();$("#gate").insertAdjacentHTML("beforeend",("<p class=\"error\" role=\"alert\">"+tr("Не удалось подключиться к облачной таблице")+".</p>")+button("retry-cloud",tr("Повторить подключение"),"text-btn"));}
 }
 init();
+
+document.addEventListener('currency-settings',()=>{
+ const names=new Intl.DisplayNames([siteLocale],{type:'currency'});
+ const codes=typeof Intl.supportedValuesOf==='function'?Intl.supportedValuesOf('currency'):Object.values(localeCurrencies);
+ const options=[...new Set([currencyCode,...codes])].sort().map(code=>'<option value="'+code+'" '+(code===currencyCode?'selected':'')+'>'+esc(code+' · '+names.of(code))+'</option>').join('');
+ modal(tr('Валюта'),field(tr('Валюта'),'<select id="display-currency" aria-label="'+tr('Валюта')+'">'+options+'</select>')+'<p class="muted">'+tr('Меняется обозначение валюты, суммы не пересчитываются.')+'</p>');
+});
+document.addEventListener('change',e=>{
+ if(e.target.id!=='display-currency')return;
+ setDisplayCurrency(e.target.value);
+ if(book)render();
+});

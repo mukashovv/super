@@ -364,3 +364,8 @@ body.month-open {
 @media(max-width:480px){.regional-admin .form-actions>*{width:100%}.regional-payments .sub-laptop{width:116px;margin:18px auto 22px}.regional-options summary{min-height:50px}.regional-plan.renew-choice{padding:13px 6px;gap:10px}}
 
 [data-open-debt]{cursor:pointer}[data-open-debt]:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+.payment-done-mark{display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 27px!important;width:27px;height:27px;color:var(--ink)}
+.payment-done-mark svg{width:19px;height:19px;stroke-width:1.4}
+[data-open-debt]:focus:not(:focus-visible){outline:none}
+@media(pointer:coarse){[data-open-debt]:focus,[data-open-debt]:focus-visible{outline:none}[data-open-debt]{-webkit-tap-highlight-color:transparent}}

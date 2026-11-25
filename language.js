@@ -4,12 +4,19 @@ const localeCurrencies = {
   ru:"RUB", ky:"KGS", en:"USD", kk:"KZT", es:"EUR", de:"EUR",
   "pt-BR":"BRL", fr:"EUR", tr:"TRY", id:"IDR", ja:"JPY"
 };
-const currencyCode = localeCurrencies[siteLocale];
-const moneyFormat = new Intl.NumberFormat(siteLocale, {
+let currencyCode = localeCurrencies[siteLocale];
+try{const saved=localStorage.getItem('supertable.currency');if(saved&&/^[A-Z]{3}$/.test(saved))currencyCode=saved;}catch{}
+let moneyFormat = new Intl.NumberFormat(siteLocale, {
   style:"currency", currency:currencyCode, currencyDisplay:"narrowSymbol",
   minimumFractionDigits:0, maximumFractionDigits:2
 });
-const currencyUnit = siteLocale === "ky" ? "сом" : moneyFormat.formatToParts(0).find(part => part.type === "currency").value;
+let currencyUnit = currencyCode === "KGS" ? "сом" : moneyFormat.formatToParts(0).find(part => part.type === "currency").value;
+function setDisplayCurrency(code){
+ currencyCode=code;
+ moneyFormat=new Intl.NumberFormat(siteLocale,{style:'currency',currency:code,currencyDisplay:'narrowSymbol',minimumFractionDigits:0,maximumFractionDigits:2});
+ currencyUnit=code==='KGS'?'сом':moneyFormat.formatToParts(0).find(p=>p.type==='currency').value;
+ try{localStorage.setItem('supertable.currency',code);}catch{}
+}
 function tr(source) {
   const dict = siteLocale === "kk" ? kazakh : siteLocale === "ky" ? kyrgyz : typeof pageTranslations !== "undefined" ? pageTranslations : internationalBrand ? english : null;
   const label = regionalTranslations[siteLocale]?.[source] ?? dict?.[source] ?? source;
@@ -29,7 +36,11 @@ for (const [tag,name] of Object.entries(languages)) {
   option.lang = tag;
   languageSelect.add(option);
 }
+languageSelect.add(new Option('────────','separator',false,false));
+languageSelect.options[languageSelect.options.length-1].disabled=true;
+languageSelect.add(new Option(tr('Валюта')+'…','currency-settings'));
 languageSelect.addEventListener("change", () => {
+ if(languageSelect.value==='currency-settings'){languageSelect.value=siteLocale;document.dispatchEvent(new Event('currency-settings'));return;}
   const tag = languageSelect.value;
   try { localStorage.setItem("supertable.language",tag); } catch {}
   location.replace(languageUrl(tag).href);
