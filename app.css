@@ -336,5 +336,40 @@ body.month-open {
 .kk-month{min-inline-size:0;border:0;padding:0;margin:0}
 .kk-month legend{margin-bottom:.4rem}
 
-/* Regional checkout retains the workbook's existing controls and palette. */
-.regional-plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.regional-plan{border:1px solid var(--line,#ddd);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}.regional-plan h3,.regional-plan p{margin:0}.regional-plan strong{font-size:1.5rem}.regional-plan p{font-size:.9rem;line-height:1.5;flex:1}.regional-plan a{text-align:center}.regional-whatsapp{display:block;text-align:center;margin-top:16px}.regional-status,.regional-record{padding:14px 0;border-bottom:1px solid #ddd;overflow-wrap:anywhere}.regional-status span{font-size:.9rem}.regional-admin form{margin:16px 0}.regional-admin .form-actions{flex-wrap:wrap}.regional-payments hr{border:0;border-top:1px solid #ddd;margin:24px 0}#dialog-body details{margin:18px 0}#dialog-body summary{cursor:pointer;font-weight:600}#dialog-body textarea{width:100%;min-height:80px;box-sizing:border-box}@media(max-width:480px){.regional-plans{grid-template-columns:1fr}.regional-plan{padding:14px}.regional-admin .form-actions>*{width:100%}}
+/* Compact regional checkout, sharing the original laptop illustration. */
+#editor:has(.regional-payments){width:min(92vw,420px)}
+.regional-payments .sub-laptop{margin:24px auto 24px;width:136px}
+.regional-payments .subscription-card h3{margin:0;font-size:1.35rem}
+.regional-payments .subscription-card p{font-size:.94rem;margin:8px 0 26px}
+.regional-options{border-top:1px solid var(--rule)}
+#dialog-body .regional-options details{margin:0}
+.regional-options summary{list-style:none;display:flex;align-items:center;gap:12px;min-height:54px;padding:12px 2px;cursor:pointer;font-size:.95rem;font-weight:500;text-align:left;box-sizing:border-box;border-radius:8px;transition:background .18s}
+.regional-options summary::-webkit-details-marker{display:none}
+.regional-options summary:hover{background:var(--wash)}
+.regional-options summary:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.regional-options summary i{width:7px;height:7px;flex:none;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin:0 7px 4px auto;transition:transform .18s}
+.regional-options details[open]>summary i{transform:rotate(225deg);margin-bottom:-2px}
+.regional-plans{border-top:1px solid var(--rule);margin:0 0 12px}
+.regional-plan{border-bottom:1px solid var(--rule)}
+.regional-plan summary{font-size:.9rem;padding:12px 6px}
+.regional-plan summary span{flex:1;min-width:0}
+.regional-plan summary b{white-space:nowrap;font-weight:600}
+.regional-plan summary i{margin-left:2px}
+.regional-plan-body{padding:0 6px 14px;animation:regional-reveal .18s ease-out}
+.regional-plan-body p{font-size:.88rem;line-height:1.5;margin:0 0 10px}
+.regional-plan-body a{display:block;text-align:center;text-decoration:none}
+.regional-whatsapp{display:block;text-align:center;text-decoration:none;font-size:.92rem}
+.regional-note{text-align:center;font-size:.85rem;color:var(--soft);margin:10px 0 16px}
+.regional-activation{border-top:1px solid var(--rule)}
+.regional-activation-body{padding:4px 0 14px;display:flex;flex-wrap:wrap;gap:10px;animation:regional-reveal .18s ease-out}
+.regional-activation-body>button{flex:1;font-size:.88rem}
+.regional-status{width:100%;font-size:.88rem;line-height:1.6;margin:4px 0;overflow-wrap:anywhere}
+.regional-status span{color:var(--soft)}
+.regional-payments .legal-links{margin-top:12px;padding-top:16px;font-size:.8rem;gap:7px}
+.regional-record{padding:14px 0;border-bottom:1px solid var(--rule);overflow-wrap:anywhere}
+.regional-admin form{margin:16px 0}.regional-admin .form-actions{flex-wrap:wrap}
+#dialog-body details:not(.regional-options details){margin:18px 0}
+#dialog-body textarea{width:100%;min-height:80px;box-sizing:border-box}
+@keyframes regional-reveal{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.regional-options *{animation:none!important;transition:none!important}}
+@media(max-width:480px){.regional-admin .form-actions>*{width:100%}.regional-payments .sub-laptop{width:116px;margin:18px auto 22px}.regional-options summary{min-height:50px}.regional-plan summary{font-size:.88rem}}
