@@ -362,3 +362,5 @@ body.month-open {
 @keyframes regional-reveal{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.regional-options *{animation:none!important;transition:none!important}}
 @media(max-width:480px){.regional-admin .form-actions>*{width:100%}.regional-payments .sub-laptop{width:116px;margin:18px auto 22px}.regional-options summary{min-height:50px}.regional-plan.renew-choice{padding:13px 6px;gap:10px}}
+
+[data-open-debt]{cursor:pointer}[data-open-debt]:focus-visible{outline:2px solid var(--ink);outline-offset:3px}

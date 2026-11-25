@@ -28,7 +28,8 @@ const Finance = (() => {
     date.setDate(Math.min(date.getDate(), Number(plan.firstDate.slice(-2))));
     return dateKey(date);
   }
-  function reminderDate(dueDate) {
+  function reminderDate(dueDate, sameDay=false) {
+    if(sameDay)return dueDate;
     const date = dateOf(dueDate);
     date.setDate(Number(dueDate.slice(-2))-4);
     return dateKey(date);
@@ -59,7 +60,7 @@ const Finance = (() => {
       const amount = Math.min(remaining, (periodAmounts.get(period) || plan.amount) - (paid.get(period) || 0));
       if (amount <= 0) continue;
       const dueDate = dueForPeriod(plan,period);
-      items.push({period, dueDate, reminder:reminderDate(dueDate), amount});
+      items.push({period, dueDate, reminder:reminderDate(dueDate,debt.remindOnDueDate), amount});
       remaining -= amount;
     }
     return items;
@@ -74,7 +75,7 @@ const Finance = (() => {
       if (!payment.period && (debt.schedule || payment.openingBalance || payment.note==="Погашено до начала учёта")) continue;
       const key = payment.period || payment.id;
       const dueDate = payment.dueDate || dueForPeriod(debt.schedule,payment.period);
-      const reminder = dueDate ? reminderDate(dueDate) : payment.date;
+      const reminder = dueDate ? reminderDate(dueDate,debt.remindOnDueDate) : payment.date;
       let item = items.get(key);
       if (!item) {
         if (!reminder.startsWith(month+"-")) continue;
