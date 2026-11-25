@@ -337,39 +337,28 @@ body.month-open {
 .kk-month legend{margin-bottom:.4rem}
 
 /* Compact regional checkout, sharing the original laptop illustration. */
-#editor:has(.regional-payments){width:min(92vw,420px)}
-.regional-payments .sub-laptop{margin:24px auto 24px;width:136px}
-.regional-payments .subscription-card h3{margin:0;font-size:1.35rem}
-.regional-payments .subscription-card p{font-size:.94rem;margin:8px 0 26px}
-.regional-options{border-top:1px solid var(--rule)}
-#dialog-body .regional-options details{margin:0}
-.regional-options summary{list-style:none;display:flex;align-items:center;gap:12px;min-height:54px;padding:12px 2px;cursor:pointer;font-size:.95rem;font-weight:500;text-align:left;box-sizing:border-box;border-radius:8px;transition:background .18s}
-.regional-options summary::-webkit-details-marker{display:none}
-.regional-options summary:hover{background:var(--wash)}
-.regional-options summary:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-.regional-options summary i{width:7px;height:7px;flex:none;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin:0 7px 4px auto;transition:transform .18s}
-.regional-options details[open]>summary i{transform:rotate(225deg);margin-bottom:-2px}
-.regional-plans{border-top:1px solid var(--rule);margin:0 0 12px}
-.regional-plan{border-bottom:1px solid var(--rule)}
-.regional-plan summary{font-size:.9rem;padding:12px 6px}
-.regional-plan summary span{flex:1;min-width:0}
-.regional-plan summary b{white-space:nowrap;font-weight:600}
-.regional-plan summary i{margin-left:2px}
-.regional-plan-body{padding:0 6px 14px;animation:regional-reveal .18s ease-out}
-.regional-plan-body p{font-size:.88rem;line-height:1.5;margin:0 0 10px}
-.regional-plan-body a{display:block;text-align:center;text-decoration:none}
-.regional-whatsapp{display:block;text-align:center;text-decoration:none;font-size:.92rem}
-.regional-note{text-align:center;font-size:.85rem;color:var(--soft);margin:10px 0 16px}
-.regional-activation{border-top:1px solid var(--rule)}
-.regional-activation-body{padding:4px 0 14px;display:flex;flex-wrap:wrap;gap:10px;animation:regional-reveal .18s ease-out}
-.regional-activation-body>button{flex:1;font-size:.88rem}
-.regional-status{width:100%;font-size:.88rem;line-height:1.6;margin:4px 0;overflow-wrap:anywhere}
+#editor:has(.regional-payments){width:min(92vw,390px)}
+.regional-options{display:grid;gap:10px}
+.regional-options>button{width:100%}
+.regional-plans{margin:0 0 8px}
+.regional-plan.renew-choice{gap:14px;padding:10px 6px;min-height:54px;transition:background .18s}
+.regional-plan span{min-width:0;flex:1}
+.regional-plan strong{display:block;font-size:.95rem;font-weight:400}
+.regional-plan b{white-space:nowrap;font-size:1rem;font-weight:600}
+.regional-plan small{font-size:.8rem;line-height:1.4;color:var(--soft);margin-top:3px}
+.regional-plan:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.regional-whatsapp{color:var(--ink);display:block;text-align:center;text-decoration:none;font-size:.92rem}
+.regional-contact{margin-top:20px}
+.regional-note{text-align:center;font-size:.8rem;color:var(--soft);margin:8px 0 0}
+.regional-status{font-size:.88rem;line-height:1.6;margin:16px 0 0;overflow-wrap:anywhere}
 .regional-status span{color:var(--soft)}
-.regional-payments .legal-links{margin-top:12px;padding-top:16px;font-size:.8rem;gap:7px}
+.regional-refresh{margin-top:8px;text-align:center}
+.regional-refresh button{font-size:.8rem;padding:6px 10px}
+.regional-payments .legal-links{margin-top:20px;padding-top:16px;font-size:.8rem;gap:7px}
 .regional-record{padding:14px 0;border-bottom:1px solid var(--rule);overflow-wrap:anywhere}
 .regional-admin form{margin:16px 0}.regional-admin .form-actions{flex-wrap:wrap}
 #dialog-body details:not(.regional-options details){margin:18px 0}
 #dialog-body textarea{width:100%;min-height:80px;box-sizing:border-box}
 @keyframes regional-reveal{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.regional-options *{animation:none!important;transition:none!important}}
-@media(max-width:480px){.regional-admin .form-actions>*{width:100%}.regional-payments .sub-laptop{width:116px;margin:18px auto 22px}.regional-options summary{min-height:50px}.regional-plan summary{font-size:.88rem}}
+@media(max-width:480px){.regional-admin .form-actions>*{width:100%}.regional-payments .sub-laptop{width:116px;margin:18px auto 22px}.regional-options summary{min-height:50px}.regional-plan.renew-choice{padding:13px 6px;gap:10px}}
