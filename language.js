@@ -39,11 +39,12 @@ function showLanguages(){
 }
 const currencyDialog=document.createElement('dialog');
 currencyDialog.className='currency-dialog';
-currencyDialog.innerHTML='<div class="currency-dialog-head"><h2>'+tr('Валюта')+'</h2><button type="button" data-currency-back>'+tr('Назад')+'</button></div><div class="currency-dialog-list" role="listbox"></div>';
+currencyDialog.innerHTML='<div class="currency-dialog-head"><h2>'+tr('Валюта')+'</h2><button type="button" data-currency-back>'+tr('Назад')+'</button></div><input class="currency-search" type="search" data-currency-search placeholder="'+(siteLocale==='ru'?'Поиск валюты':siteLocale==='ky'?'Валютаны издөө':'Search currency')+'" aria-label="'+(siteLocale==='ru'?'Поиск валюты':siteLocale==='ky'?'Валютаны издөө':'Search currency')+'"><div class="currency-dialog-list" role="listbox"></div>';
 document.body.append(currencyDialog);
 const currencyList=currencyDialog.querySelector('.currency-dialog-list');
 function showCurrencies(){
  currencyList.replaceChildren();
+ const search=currencyDialog.querySelector('[data-currency-search]');search.value='';
  const names=new Intl.DisplayNames([siteLocale],{type:'currency'});
  const codes=typeof Intl.supportedValuesOf==='function'?Intl.supportedValuesOf('currency'):Object.values(localeCurrencies);
  for(const code of [...new Set([currencyCode,...codes])].sort()){
@@ -53,6 +54,7 @@ function showCurrencies(){
   currencyList.append(item);
  }
  currencyDialog.showModal();
+ search.focus();search.oninput=()=>{const query=search.value.trim().toLocaleLowerCase(siteLocale);for(const item of currencyList.children)item.hidden=!item.textContent.toLocaleLowerCase(siteLocale).includes(query);};
 }
 showLanguages();
 languageSelect.addEventListener('change',()=>{

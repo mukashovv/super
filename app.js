@@ -776,4 +776,4 @@ async function init(){
 }
 init();
 
-document.addEventListener('currency-changed',()=>{if(book)render();});
+document.addEventListener('currency-changed',()=>{if(book){document.body.classList.add('currency-transition');render();requestAnimationFrame(()=>{requestAnimationFrame(()=>{document.body.classList.remove('currency-transition');document.body.classList.add('currency-updated');setTimeout(()=>document.body.classList.remove('currency-updated'),450);});});}});

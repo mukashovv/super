@@ -386,9 +386,16 @@ body.month-open {
 .currency-dialog::backdrop{background:#20231f66;backdrop-filter:blur(3px)}
 .currency-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--rule);position:sticky;top:0;background:white}
 .currency-dialog-head h2{font-size:1.1rem;margin:0}
+.currency-search{display:block;width:calc(100% - 28px);margin:12px 14px 4px;padding:10px 12px;border:1px solid var(--rule);border-radius:9px;font:inherit;background:white;color:var(--ink)}
 .currency-dialog-head button{padding:7px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--wash);font-size:.88rem}
-.currency-dialog-list{display:grid;gap:2px;padding:8px;max-height:calc(min(78vh,620px) - 62px);overflow:auto}
+.currency-dialog-list{display:grid;gap:2px;padding:8px;max-height:calc(min(78vh,620px) - 120px);overflow:auto}
 .currency-dialog-list button{padding:10px 12px;text-align:left;border:0;border-radius:8px;background:transparent;font-size:.9rem}
 .currency-dialog-list button:hover,.currency-dialog-list button[aria-selected=true]{background:var(--wash)}
 .currency-dialog-list button[aria-selected=true]{font-weight:600}
 @media(max-width:640px){.currency-dialog{width:calc(100vw - 28px);max-height:calc(100svh - 34px);margin:auto}.currency-dialog-list{max-height:calc(100svh - 105px)}.currency-dialog-head{padding:13px 14px}}
+.currency-transition .content{overflow:hidden}
+.currency-transition .sheet-number,.currency-transition .summary-card dd,.currency-transition .stat-value{animation:currency-out .24s ease-in both}
+.currency-updated .sheet-number,.currency-updated .summary-card dd,.currency-updated .stat-value{animation:currency-in .32s ease-out both}
+@keyframes currency-out{to{opacity:0;transform:translateX(-14px)}}
+@keyframes currency-in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.currency-transition .sheet-number,.currency-transition .summary-card dd,.currency-transition .stat-value,.currency-updated .sheet-number,.currency-updated .summary-card dd,.currency-updated .stat-value{animation:none}}
