@@ -42,7 +42,41 @@ currencyDialog.className='currency-dialog';
 currencyDialog.innerHTML='<div class="currency-dialog-head"><h2>'+tr('Валюта')+'</h2><button type="button" data-currency-back>'+tr('Назад')+'</button></div><input class="currency-search" type="search" data-currency-search placeholder="'+(siteLocale==='ru'?'Поиск валюты':siteLocale==='ky'?'Валютаны издөө':'Search currency')+'" aria-label="'+(siteLocale==='ru'?'Поиск валюты':siteLocale==='ky'?'Валютаны издөө':'Search currency')+'"><div class="currency-dialog-list" role="listbox"></div>';
 document.body.append(currencyDialog);
 const currencyList=currencyDialog.querySelector('.currency-dialog-list');
+const mobileMenu=matchMedia('(max-width:640px)');
+const languageButton=document.createElement('button');
+languageButton.className='mobile-language-button';
+languageButton.textContent=languages[siteLocale];
+languageSelect.after(languageButton);
+const languageList=document.createElement('div');
+languageList.className='mobile-language-list';
+currencyDialog.prepend(languageList);
+function showMobileLanguages(){
+ currencyDialog.dataset.page='languages';
+ languageList.replaceChildren();
+ for(const option of languageSelect.options){
+  const button=document.createElement('button');
+  button.textContent=option.text;
+  button.onclick=()=>{
+   if(option.value==='currency-settings'){showCurrencies();return;}
+   currencyDialog.close();
+   languageSelect.value=option.value;
+   languageSelect.dispatchEvent(new Event('change'));
+  };
+  languageList.append(button);
+ }
+ if(!currencyDialog.open)currencyDialog.showModal();
+ positionCurrencyDialog();
+ languageList.firstElementChild.focus({preventScroll:true});
+}
+languageButton.onclick=showMobileLanguages;
+currencyDialog.addEventListener('click',event=>{
+ if(event.target===currencyDialog && mobileMenu.matches){
+  const box=currencyDialog.getBoundingClientRect();
+  if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)currencyDialog.close();
+ }
+});
 function showCurrencies(){
+ currencyDialog.dataset.page='currencies';
  currencyList.replaceChildren();
  const search=currencyDialog.querySelector('[data-currency-search]');search.value='';
  const names=new Intl.DisplayNames([siteLocale],{type:'currency'});
@@ -53,12 +87,23 @@ function showCurrencies(){
   item.addEventListener('click',()=>{if(code!==currencyCode)document.dispatchEvent(new Event('currency-changing'));setDisplayCurrency(code);currencyDialog.close();languageSelect.value=siteLocale;languageSelect.blur();document.activeElement?.blur();document.dispatchEvent(new Event('currency-changed'));});
   currencyList.append(item);
  }
- currencyDialog.showModal();
+ if(!currencyDialog.open)currencyDialog.showModal();
  positionCurrencyDialog();
  currencyDialog.querySelector('[data-currency-back]').focus({preventScroll:true});
  search.oninput=()=>{const query=search.value.trim().toLocaleLowerCase(siteLocale);for(const item of currencyList.children)item.hidden=!item.textContent.toLocaleLowerCase(siteLocale).includes(query);currencyList.scrollTop=0;};
 }
-function positionCurrencyDialog(){if(!currencyDialog.open||!window.visualViewport)return;currencyDialog.style.setProperty('--currency-view-top',window.visualViewport.offsetTop+'px');currencyDialog.style.setProperty('--currency-view-height',window.visualViewport.height+'px');}
+function positionCurrencyDialog(){
+ if(!currencyDialog.open||!mobileMenu.matches)return;
+ const viewport=window.visualViewport;
+ const top=viewport?.offsetTop||0;
+ const height=viewport?.height||window.innerHeight;
+ const anchor=languageButton.getBoundingClientRect();
+ const menuTop=Math.max(top+6,Math.min(anchor.bottom+5,top+height/3));
+ const width=Math.min(280,window.innerWidth-24);
+ currencyDialog.style.setProperty('--menu-top',menuTop+'px');
+ currencyDialog.style.setProperty('--menu-left',Math.max(12,Math.min(anchor.left,window.innerWidth-width-12))+'px');
+ currencyDialog.style.setProperty('--menu-height',Math.max(0,top+height-menuTop-12)+'px');
+}
 window.visualViewport?.addEventListener('resize',positionCurrencyDialog);
 window.visualViewport?.addEventListener('scroll',positionCurrencyDialog);
 currencyDialog.addEventListener('toggle',positionCurrencyDialog);
@@ -69,7 +114,7 @@ languageSelect.addEventListener('change',()=>{
  try{localStorage.setItem('supertable.language',value);}catch{}
  location.replace(languageUrl(value).href);
 });
-currencyDialog.querySelector('[data-currency-back]').addEventListener('click',()=>currencyDialog.close());
+currencyDialog.querySelector('[data-currency-back]').addEventListener('click',()=>mobileMenu.matches?showMobileLanguages():currencyDialog.close());
 currencyDialog.addEventListener('cancel',event=>{event.preventDefault();currencyDialog.close();});
 // Translate the static shell before the app renders any personal records.
 for (const el of document.querySelectorAll("title,.brand span,#gate button,#install-app,#install-title,noscript")) {
