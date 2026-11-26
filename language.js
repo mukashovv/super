@@ -31,33 +31,38 @@ document.querySelector('link[rel="apple-touch-icon"]').href = internationalBrand
 if (siteLocale !== "ru") document.querySelector('link[rel="manifest"]').href = "./manifest-"+siteLocale+".webmanifest";
 document.querySelector('meta[name="apple-mobile-web-app-title"]').content = tr("Супер Таблица");
 const languageSelect=document.getElementById('language');
-let choosingCurrency=false;
 function showLanguages(){
- choosingCurrency=false;languageSelect.replaceChildren();
+ languageSelect.replaceChildren();
  for(const [tag,name] of Object.entries(languages)){const option=new Option(name,tag,false,tag===siteLocale);option.lang=tag;languageSelect.add(option);}
  languageSelect.add(new Option(tr('Валюта')+'…','currency-settings'));
  languageSelect.setAttribute('aria-label','Язык / Тил');
 }
+const currencyDialog=document.createElement('dialog');
+currencyDialog.className='currency-dialog';
+currencyDialog.innerHTML='<div class="currency-dialog-head"><h2>'+tr('Валюта')+'</h2><button type="button" data-currency-back>'+tr('Назад')+'</button></div><div class="currency-dialog-list" role="listbox"></div>';
+document.body.append(currencyDialog);
+const currencyList=currencyDialog.querySelector('.currency-dialog-list');
 function showCurrencies(){
- choosingCurrency=true;languageSelect.replaceChildren();
- languageSelect.add(new Option(tr('Назад'),'back'));
+ currencyList.replaceChildren();
  const names=new Intl.DisplayNames([siteLocale],{type:'currency'});
  const codes=typeof Intl.supportedValuesOf==='function'?Intl.supportedValuesOf('currency'):Object.values(localeCurrencies);
- for(const code of [...new Set([currencyCode,...codes])].sort())languageSelect.add(new Option(code+' · '+(code==='KGS'&&siteLocale==='ru'?'Кыргызский сом':names.of(code)),code,false,code===currencyCode));
- languageSelect.setAttribute('aria-label',tr('Валюта'));languageSelect.focus();
- try{languageSelect.showPicker?.();}catch{}
+ for(const code of [...new Set([currencyCode,...codes])].sort()){
+  const item=document.createElement('button'); item.type='button'; item.dataset.currency=code; item.setAttribute('role','option'); item.setAttribute('aria-selected',String(code===currencyCode));
+  item.textContent=code+' · '+(code==='KGS'&&siteLocale==='ru'?'Кыргызский сом':names.of(code));
+  item.addEventListener('click',()=>{setDisplayCurrency(code);currencyDialog.close();languageSelect.value=siteLocale;document.dispatchEvent(new Event('currency-changed'));});
+  currencyList.append(item);
+ }
+ currencyDialog.showModal();
 }
 showLanguages();
 languageSelect.addEventListener('change',()=>{
  const value=languageSelect.value;
- if(choosingCurrency){
-  if(value==='back'){showLanguages();try{languageSelect.showPicker?.();}catch{}return;}
-  setDisplayCurrency(value);document.dispatchEvent(new Event('currency-changed'));showLanguages();return;
- }
- if(value==='currency-settings'){showCurrencies();return;}
+ if(value==='currency-settings'){languageSelect.value=siteLocale;showCurrencies();return;}
  try{localStorage.setItem('supertable.language',value);}catch{}
  location.replace(languageUrl(value).href);
 });
+currencyDialog.querySelector('[data-currency-back]').addEventListener('click',()=>currencyDialog.close());
+currencyDialog.addEventListener('cancel',event=>{event.preventDefault();currencyDialog.close();});
 // Translate the static shell before the app renders any personal records.
 for (const el of document.querySelectorAll("title,.brand span,#gate button,#install-app,#install-title,noscript")) {
   for (const node of el.childNodes) if (node.nodeType === Node.TEXT_NODE) node.textContent = tr(node.textContent);

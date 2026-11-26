@@ -382,3 +382,13 @@ body.month-open {
 .session-loading .welcome{opacity:0;animation:loading-welcome .15s ease .6s forwards}
 @keyframes loading-welcome{to{opacity:1}}
 #language{max-width:min(45vw,210px)}
+.currency-dialog{width:min(92vw,360px);max-height:min(78vh,620px);padding:0;border:1px solid var(--rule);border-radius:14px;background:white;color:var(--ink);box-shadow:0 18px 55px #0003}
+.currency-dialog::backdrop{background:#20231f66;backdrop-filter:blur(3px)}
+.currency-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--rule);position:sticky;top:0;background:white}
+.currency-dialog-head h2{font-size:1.1rem;margin:0}
+.currency-dialog-head button{padding:7px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--wash);font-size:.88rem}
+.currency-dialog-list{display:grid;gap:2px;padding:8px;max-height:calc(min(78vh,620px) - 62px);overflow:auto}
+.currency-dialog-list button{padding:10px 12px;text-align:left;border:0;border-radius:8px;background:transparent;font-size:.9rem}
+.currency-dialog-list button:hover,.currency-dialog-list button[aria-selected=true]{background:var(--wash)}
+.currency-dialog-list button[aria-selected=true]{font-weight:600}
+@media(max-width:640px){.currency-dialog{width:calc(100vw - 28px);max-height:calc(100svh - 34px);margin:auto}.currency-dialog-list{max-height:calc(100svh - 105px)}.currency-dialog-head{padding:13px 14px}}
