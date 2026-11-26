@@ -528,7 +528,11 @@ async function handleAction(el){
  if(action==="jump-month"){month=key;view="month";render();return;}
  if(action==="new-month"){
   if(!book.paid){upgrade();return;}
-  modal(tr("Новая месячная вкладка"),formWrap("month",monthField(tr("Месяц"),"month",F.nextMonth(month,1),"1000-01"),tr("Создать вкладку")));return;
+  let suggestedMonth = F.nextMonth(month, 1);
+  while (book.months[suggestedMonth]) {
+    suggestedMonth = F.nextMonth(suggestedMonth, 1);
+  }
+  modal(tr("Новая месячная вкладка"),formWrap("month",monthField(tr("Месяц"),"month",suggestedMonth,"1000-01"),tr("Создать вкладку")));return;
  }
  if(action==="subscription" || action==="renew"){await subscription(action==="renew");return;}
  if(action==="upgrade"){await upgrade();return;}
