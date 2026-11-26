@@ -56,6 +56,7 @@ function showMobileLanguages(){
  for(const option of languageSelect.options){
   const button=document.createElement('button');
   button.textContent=option.text;
+  if(option.value===siteLocale)button.setAttribute('aria-current','true');
   button.onclick=()=>{
    if(option.value==='currency-settings'){showCurrencies();return;}
    currencyDialog.close();
