@@ -31,20 +31,43 @@ document.querySelector('link[rel="apple-touch-icon"]').href = internationalBrand
 if (siteLocale !== "ru") document.querySelector('link[rel="manifest"]').href = "./manifest-"+siteLocale+".webmanifest";
 document.querySelector('meta[name="apple-mobile-web-app-title"]').content = tr("Супер Таблица");
 const languageSelect = document.getElementById("language");
-for (const [tag,name] of Object.entries(languages)) {
-  const option = new Option(name,tag,false,tag===siteLocale);
-  option.lang = tag;
-  languageSelect.add(option);
+const localeMenu=document.createElement('details');localeMenu.className='locale-menu';
+const localeToggle=document.createElement('summary');localeToggle.id='language';localeToggle.textContent=languages[siteLocale];localeToggle.setAttribute('aria-label','Язык / Тил');
+const localePanel=document.createElement('div');localePanel.className='locale-panel';
+for(const [tag,name] of Object.entries(languages)){
+ const item=document.createElement('button');item.type='button';item.textContent=name;item.lang=tag;item.setAttribute('aria-pressed',String(tag===siteLocale));
+ item.addEventListener('click',()=>{try{localStorage.setItem('supertable.language',tag);}catch{}location.replace(languageUrl(tag).href);});
+ localePanel.append(item);
 }
-languageSelect.add(new Option('────────','separator',false,false));
-languageSelect.options[languageSelect.options.length-1].disabled=true;
-languageSelect.add(new Option(tr('Валюта')+'…','currency-settings'));
-languageSelect.addEventListener("change", () => {
- if(languageSelect.value==='currency-settings'){languageSelect.value=siteLocale;document.dispatchEvent(new Event('currency-settings'));return;}
-  const tag = languageSelect.value;
-  try { localStorage.setItem("supertable.language",tag); } catch {}
-  location.replace(languageUrl(tag).href);
-});
+const currencyMenu=document.createElement('div');currencyMenu.className='currency-menu';currencyMenu.hidden=true;
+const currencyToggle=document.createElement('button');currencyToggle.type='button';currencyToggle.textContent=tr('Валюта');
+const currencyBack=document.createElement('button');currencyBack.type='button';currencyBack.textContent=tr('Назад');
+const currencyList=document.createElement('div');currencyList.className='currency-list';
+const currencyNames=new Intl.DisplayNames([siteLocale],{type:'currency'});
+const supportedCurrencies=typeof Intl.supportedValuesOf==='function'?Intl.supportedValuesOf('currency'):Object.values(localeCurrencies);
+for(const code of [...new Set([currencyCode,...supportedCurrencies])].sort()){
+ const item=document.createElement('button');item.type='button';item.dataset.currency=code;
+ item.textContent=code+' · '+(code==='KGS'&&siteLocale==='ru'?'Кыргызский сом':currencyNames.of(code));
+ item.setAttribute('aria-pressed',String(code===currencyCode));
+ item.addEventListener('click',()=>{
+  setDisplayCurrency(code);
+  currencyList.querySelectorAll('button').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.currency===code)));
+  document.dispatchEvent(new Event('currency-changed'));
+  localeMenu.open=false;localeToggle.focus();
+ });
+ currencyList.append(item);
+}
+function showCurrencyList(show){
+ for(const child of localePanel.children)child.hidden=show;
+ currencyMenu.hidden=!show;localePanel.scrollTop=0;
+ (show?currencyBack:currencyToggle).focus();
+}
+currencyToggle.addEventListener('click',()=>showCurrencyList(true));
+currencyBack.addEventListener('click',()=>showCurrencyList(false));
+localeMenu.addEventListener('toggle',()=>{if(!localeMenu.open){for(const child of localePanel.children)child.hidden=false;currencyMenu.hidden=true;}});
+currencyMenu.append(currencyBack,currencyList);localePanel.append(currencyToggle,currencyMenu);localeMenu.append(localeToggle,localePanel);languageSelect.replaceWith(localeMenu);
+document.addEventListener('click',event=>{if(!localeMenu.contains(event.target))localeMenu.open=false;});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&localeMenu.open){localeMenu.open=false;localeToggle.focus();}});
 // Translate the static shell before the app renders any personal records.
 for (const el of document.querySelectorAll("title,.brand span,#gate button,#install-app,#install-title,noscript")) {
   for (const node of el.childNodes) if (node.nodeType === Node.TEXT_NODE) node.textContent = tr(node.textContent);

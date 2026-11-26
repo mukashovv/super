@@ -97,7 +97,7 @@ const Finance = (() => {
     return Boolean(book?.paid && (!book.paid_until || Date.parse(book.paid_until)>Date.now()));
   }
   function visibleBook(book) {
-    return book && !fullAccess(book) ? {...book,paid:false,debts:{}} : book;
+    return book && !fullAccess(book) ? {...book,paid:false,trial_active:false,access_locked:true,months:{},debts:{}} : book;
   }
   function startLocal() {
     local = true; account = null;
@@ -107,6 +107,7 @@ const Finance = (() => {
       book.months[book.trial]={rev:1,data:emptyMonth()};
       localStorage.setItem(localKey,JSON.stringify(book));
     }
+    if(!book.trial_until){book.trial_until=new Date(Date.now()+72*3600000).toISOString();book.paid_until=book.trial_until;book.paid=true;book.trial_active=true;localStorage.setItem(localKey,JSON.stringify(book));}
     return visibleBook(book);
   }
   const configured = Boolean(config.supabaseUrl && config.supabasePublishableKey);
@@ -163,7 +164,7 @@ const Finance = (() => {
     const write = () => {
       const b=readLocal();
       if(kind==="debts" && !fullAccess(b)) throw new Error("SUBSCRIPTION_REQUIRED");
-      if(kind==="months" && !fullAccess(b) && key!==b.trial) throw new Error("MONTH_LIMIT");
+      if(!fullAccess(b)) throw new Error("SUBSCRIPTION_REQUIRED");
       if((b[kind][key]?.rev || 0)!==rev) throw new Error("STALE_VERSION");
       const record={rev:rev+1,data};
       b[kind][key]=record;

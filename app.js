@@ -7,7 +7,7 @@ const monthNames=siteLocale==="kk"
  ? ["Қаңтар","Ақпан","Наурыз","Сәуір","Мамыр","Маусым","Шілде","Тамыз","Қыркүйек","Қазан","Қараша","Желтоқсан"]
  : Array.from({length:12},(_,i)=>new Intl.DateTimeFormat(siteLocale,{month:"long"}).format(new Date(2024,i,1)));
 const currency=new Intl.NumberFormat(siteLocale,{maximumFractionDigits:2});
-const money=cents=>siteLocale === "ky" ? currency.format(cents/100)+" "+currencyUnit : moneyFormat.format(cents/100);
+const money=cents=>currencyCode === "KGS" ? currency.format(cents/100)+" "+currencyUnit : moneyFormat.format(cents/100);
 const numberInput=cents=>cents ? String(cents/100) : "";
 const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const monthName=(key,year=true)=>monthNames[Number(key.slice(5))-1]+(year?" "+key.slice(0,4):"");
@@ -96,8 +96,8 @@ async function workspace(local=false){
  workspaceOpening=(async()=>{
    book=local?F.startLocal():await F.load();
    month=book.paid?F.monthKey():book.trial;
-   if(!book.months[month])await createMonth(month);
-   view="month";year=month.slice(0,4);compare=month;render();showAccessWelcome();
+   if(!book.access_locked&&!book.months[month])await createMonth(month);
+   view="month";year=month.slice(0,4);compare=month;render();if(book.access_locked)await upgrade();else showAccessWelcome();
  })();
  try{await workspaceOpening;}finally{workspaceOpening=null;}
 }
@@ -117,9 +117,9 @@ function render(){
  const tabs=[["month",tr("Месяц")],["debts",tr("Долги")],["year",tr("Годы")]];
  if(book.manager)tabs.push(["members",tr("Участники")]);
  const nav=tabs.map(([key,name])=>button("view",icon(key)+name,"nav-item "+(view===key?"active":""),'data-key="'+key+'" '+(view===key?'aria-current="page"':""))).join("");
- const plan=book.paid?button("subscription",tr("Полный доступ"),"plan-label"):button("upgrade",tr("Бесплатный месяц"),"plan-label");
+ const plan=button("subscription",tr(book.trial_active?"3 дня бесплатно":book.paid?"Полный доступ":"Выбрать тариф"),"plan-label");
  const section={month:monthView,debts:debtView,year:yearView,members:membersView}[view];
- main.innerHTML=("<div class=\"desk\"><nav class=\"tabs\" aria-label=\""+tr("Разделы таблицы")+"\">")+nav+plan+'</nav><section class="content">'+section()+'</section></div>';
+ main.innerHTML=("<div class=\"desk\"><nav class=\"tabs\" aria-label=\""+tr("Разделы таблицы")+"\">")+nav+plan+'</nav><section class="content">'+(book.access_locked&&view!=='members'?'<section class="panel content"><h2>'+tr('Доступ закончился')+'</h2><p>'+tr('Для продолжения выберите подписку. Ваши данные сохранены.')+'</p>'+button('upgrade',tr('Выбрать тариф'),'primary')+'</section>':section())+'</section></div>';
 }
 const weekdays=Array.from({length:7},(_,i)=>new Intl.DateTimeFormat(siteLocale,{weekday:"short"}).format(new Date(2024,0,1+i)));
 const shortSum = new Intl.NumberFormat(siteLocale, {notation:"compact", maximumFractionDigits:1});
@@ -452,7 +452,7 @@ async function persist(kind,key,rev,data,after){
 }
 async function showAccessWelcome(){
  const current=book;
- if(F.local || !F.fullAccess(current))return;
+ if(F.local || current.trial_active || !F.fullAccess(current))return;
  try{
    if(await F.claimAccessNotice() && book===current){
      const box=$("#access-welcome");
@@ -517,7 +517,8 @@ async function handleAction(el){
  if(action==="start"){renderGate("choice");return;}
  if(action==="login"||action==="register"||action==="reset"){renderGate(action);return;}
  if(action==="local"){await workspace(true);sessionStorage.setItem("st-preview-open","1");return;}
- if(action==="leave"){await F.leave();sessionStorage.removeItem("st-preview-open");home();return;}
+ if(action==="leave"){modal(tr('Выйти из аккаунта?'),'<p>'+tr('Вы действительно хотите выйти?')+'</p><div class="form-actions">'+button('close',tr('Отмена'),'secondary')+button('leave-confirm',tr('Выйти'),'primary')+'</div>');return;}
+ if(action==="leave-confirm"){await F.leave();sessionStorage.removeItem("st-preview-open");home();return;}
  if(action==="retry-cloud"){await init();return;}
  if(action==="view" && key==="members"){await loadMembers(0);return;}
  if(action==="members-next"){await loadMembers(memberOffset+memberPageSize);return;}
@@ -676,6 +677,7 @@ async function submit(form){
 }
 function lockSubscription(){
  book.paid=false;
+ book.trial_active=false;book.access_locked=true;book.months={};
  book.debts={};
  month=book.trial;
  if(dialog.open)dialog.close();
@@ -684,7 +686,7 @@ function lockSubscription(){
 function checkExpiry(){
  if(!book?.paid || F.fullAccess(book))return false;
  lockSubscription();
- notice(tr("Срок подписки закончился"));
+ notice(tr("Срок подписки закончился"));upgrade();
  return true;
 }
 async function run(task){
@@ -774,14 +776,4 @@ async function init(){
 }
 init();
 
-document.addEventListener('currency-settings',()=>{
- const names=new Intl.DisplayNames([siteLocale],{type:'currency'});
- const codes=typeof Intl.supportedValuesOf==='function'?Intl.supportedValuesOf('currency'):Object.values(localeCurrencies);
- const options=[...new Set([currencyCode,...codes])].sort().map(code=>'<option value="'+code+'" '+(code===currencyCode?'selected':'')+'>'+esc(code+' · '+names.of(code))+'</option>').join('');
- modal(tr('Валюта'),field(tr('Валюта'),'<select id="display-currency" aria-label="'+tr('Валюта')+'">'+options+'</select>')+'<p class="muted">'+tr('Меняется обозначение валюты, суммы не пересчитываются.')+'</p>');
-});
-document.addEventListener('change',e=>{
- if(e.target.id!=='display-currency')return;
- setDisplayCurrency(e.target.value);
- if(book)render();
-});
+document.addEventListener('currency-changed',()=>{if(book)render();});
