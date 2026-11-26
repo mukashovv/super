@@ -392,25 +392,19 @@ body.month-open {
 .currency-dialog-list{display:grid;gap:2px;padding:8px;min-height:0;overflow:auto;overscroll-behavior:contain}
 .currency-dialog-list [hidden]{display:none}
 .currency-dialog input.currency-search{box-sizing:border-box;align-self:stretch;width:auto;max-width:calc(100% - 28px)}
-.mobile-language-button,.mobile-language-list{display:none}
 .currency-dialog-list button{padding:10px 12px;text-align:left;border:0;border-radius:8px;background:transparent;font-size:.9rem}
 .currency-dialog-list button:hover,.currency-dialog-list button[aria-selected=true]{background:var(--wash)}
 .currency-dialog-list button[aria-selected=true]{font-weight:600}
 @media(max-width:640px){.currency-dialog{position:fixed;top:calc(var(--currency-view-top,0px) + 12px);left:50%;transform:translateX(-50%);width:calc(100vw - 28px);max-height:calc(var(--currency-view-height,100dvh) - 24px);margin:0}.currency-dialog-head{padding:13px 14px}}
 .currency-transition .content{overflow:hidden}
 @media(max-width:640px){
- #language{display:none}
- .mobile-language-button{display:inline-flex;align-items:center;gap:3px;flex:none;min-height:32px;padding-inline:3px;border:0;border-radius:6px;background:var(--wash);color:var(--ink);font:inherit;font-size:.72rem}
- .mobile-language-button::after{content:"⌄"}
  .currency-dialog[open]{left:var(--menu-left,12px);top:var(--menu-top,55px);right:auto;bottom:auto;transform:none;width:min(280px,calc(100vw - 24px));max-height:var(--menu-height,65dvh);overflow:hidden}
  .currency-dialog::backdrop{background:transparent;backdrop-filter:none}
- .currency-dialog[data-page=languages]>:not(.mobile-language-list){display:none}
- .currency-dialog[data-page=languages] .mobile-language-list{display:grid;padding:8px;overflow:auto}
  .currency-dialog[open]{font-family:inherit;border-radius:12px;box-shadow:0 8px 28px #0002}
- .mobile-language-list,.currency-dialog-list{gap:0}
- .mobile-language-list button,.currency-dialog-list button{display:block;width:100%;text-align:start;padding:9px 12px;border:0;border-radius:6px;background:transparent;color:inherit;font-family:inherit;font-size:.9rem;font-weight:400}
- .mobile-language-list button:hover,.mobile-language-list button[aria-current=true],.currency-dialog-list button[aria-selected=true]{background:var(--wash)}
- .mobile-language-list button[aria-current=true],.currency-dialog-list button[aria-selected=true]{font-weight:600}
+ .currency-dialog-list{gap:0}
+ .currency-dialog-list button{display:block;width:100%;text-align:start;padding:9px 12px;border:0;border-radius:6px;background:transparent;color:inherit;font-family:inherit;font-size:.9rem;font-weight:400}
+ .currency-dialog-list button[aria-selected=true]{background:var(--wash)}
+ .currency-dialog-list button[aria-selected=true]{font-weight:600}
 }
 .currency-transition .sheet-number,.currency-transition .sheet-totals dd,.currency-transition .stats strong,.currency-transition .debt-card strong,.currency-transition .big-money,.currency-transition .table-wrap td,.currency-transition .payments b{animation:currency-out .22s ease-in both}
 .currency-updated .sheet-number,.currency-updated .sheet-totals dd,.currency-updated .stats strong,.currency-updated .debt-card strong,.currency-updated .big-money,.currency-updated .table-wrap td,.currency-updated .payments b{animation:currency-in .32s ease-out both}

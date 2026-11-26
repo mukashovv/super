@@ -43,33 +43,6 @@ currencyDialog.innerHTML='<div class="currency-dialog-head"><h2>'+tr('Валют
 document.body.append(currencyDialog);
 const currencyList=currencyDialog.querySelector('.currency-dialog-list');
 const mobileMenu=matchMedia('(max-width:640px)');
-const languageButton=document.createElement('button');
-languageButton.className='mobile-language-button';
-languageButton.textContent=languages[siteLocale];
-languageSelect.after(languageButton);
-const languageList=document.createElement('div');
-languageList.className='mobile-language-list';
-currencyDialog.prepend(languageList);
-function showMobileLanguages(){
- currencyDialog.dataset.page='languages';
- languageList.replaceChildren();
- for(const option of languageSelect.options){
-  const button=document.createElement('button');
-  button.textContent=option.text;
-  if(option.value===siteLocale)button.setAttribute('aria-current','true');
-  button.onclick=()=>{
-   if(option.value==='currency-settings'){showCurrencies();return;}
-   currencyDialog.close();
-   languageSelect.value=option.value;
-   languageSelect.dispatchEvent(new Event('change'));
-  };
-  languageList.append(button);
- }
- if(!currencyDialog.open)currencyDialog.showModal();
- positionCurrencyDialog();
- languageList.firstElementChild.focus({preventScroll:true});
-}
-languageButton.onclick=showMobileLanguages;
 currencyDialog.addEventListener('click',event=>{
  if(event.target===currencyDialog && mobileMenu.matches){
   const box=currencyDialog.getBoundingClientRect();
@@ -77,7 +50,6 @@ currencyDialog.addEventListener('click',event=>{
  }
 });
 function showCurrencies(){
- currencyDialog.dataset.page='currencies';
  currencyList.replaceChildren();
  const search=currencyDialog.querySelector('[data-currency-search]');search.value='';
  const names=new Intl.DisplayNames([siteLocale],{type:'currency'});
@@ -98,7 +70,7 @@ function positionCurrencyDialog(){
  const viewport=window.visualViewport;
  const top=viewport?.offsetTop||0;
  const height=viewport?.height||window.innerHeight;
- const anchor=languageButton.getBoundingClientRect();
+ const anchor=languageSelect.getBoundingClientRect();
  const menuTop=Math.max(top+6,Math.min(anchor.bottom+5,top+height/3));
  const width=Math.min(280,window.innerWidth-24);
  currencyDialog.style.setProperty('--menu-top',menuTop+'px');
@@ -115,7 +87,11 @@ languageSelect.addEventListener('change',()=>{
  try{localStorage.setItem('supertable.language',value);}catch{}
  location.replace(languageUrl(value).href);
 });
-currencyDialog.querySelector('[data-currency-back]').addEventListener('click',()=>mobileMenu.matches?showMobileLanguages():currencyDialog.close());
+currencyDialog.querySelector('[data-currency-back]').addEventListener('click',()=>{
+ currencyDialog.close();
+ languageSelect.focus({preventScroll:true});
+ if(mobileMenu.matches){try{languageSelect.showPicker?.();}catch{ /* The select remains focused. */ }}
+});
 currencyDialog.addEventListener('cancel',event=>{event.preventDefault();currencyDialog.close();});
 // Translate the static shell before the app renders any personal records.
 for (const el of document.querySelectorAll("title,.brand span,#gate button,#install-app,#install-title,noscript")) {
