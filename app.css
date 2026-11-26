@@ -378,3 +378,7 @@ body.month-open {
 .locale-panel [hidden]{display:none!important}
 .currency-list{overscroll-behavior:contain}
 .currency-menu>button{position:sticky;top:-8px;background:white;border-bottom:1px solid var(--rule);border-radius:0;margin-bottom:6px}
+
+.session-loading .welcome{opacity:0;animation:loading-welcome .15s ease .6s forwards}
+@keyframes loading-welcome{to{opacity:1}}
+#language{max-width:min(45vw,210px)}

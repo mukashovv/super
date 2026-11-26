@@ -519,7 +519,7 @@ async function handleAction(el){
  if(action==="local"){await workspace(true);sessionStorage.setItem("st-preview-open","1");return;}
  if(action==="leave"){modal(tr('Выйти из аккаунта?'),'<p>'+tr('Вы действительно хотите выйти?')+'</p><div class="form-actions">'+button('close',tr('Отмена'),'secondary')+button('leave-confirm',tr('Выйти'),'primary')+'</div>');return;}
  if(action==="leave-confirm"){await F.leave();sessionStorage.removeItem("st-preview-open");home();return;}
- if(action==="retry-cloud"){await init();return;}
+ if(action==="retry-cloud"){await init().finally(()=>document.documentElement.classList.remove('session-loading'));return;}
  if(action==="view" && key==="members"){await loadMembers(0);return;}
  if(action==="members-next"){await loadMembers(memberOffset+memberPageSize);return;}
  if(action==="members-prev"){await loadMembers(Math.max(0,memberOffset-memberPageSize));return;}
