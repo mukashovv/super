@@ -31,16 +31,23 @@ document.querySelector('link[rel="apple-touch-icon"]').href = internationalBrand
 if (siteLocale !== "ru") document.querySelector('link[rel="manifest"]').href = "./manifest-"+siteLocale+".webmanifest";
 document.querySelector('meta[name="apple-mobile-web-app-title"]').content = tr("Супер Таблица");
 const languageSelect = document.getElementById("language");
-const localeMenu=document.createElement('details');localeMenu.className='locale-menu';
-const localeToggle=document.createElement('summary');localeToggle.id='language';localeToggle.textContent=languages[siteLocale];localeToggle.setAttribute('aria-label','Язык / Тил');
-const localePanel=document.createElement('div');localePanel.className='locale-panel';
+const localeMenu=document.createElement('div');localeMenu.className='locale-menu';
+languageSelect.before(localeMenu);localeMenu.append(languageSelect);
+const localePanel=document.createElement('div');localePanel.className='locale-panel';localePanel.hidden=true;
 for(const [tag,name] of Object.entries(languages)){
- const item=document.createElement('button');item.type='button';item.textContent=name;item.lang=tag;item.setAttribute('aria-pressed',String(tag===siteLocale));
- item.addEventListener('click',()=>{try{localStorage.setItem('supertable.language',tag);}catch{}location.replace(languageUrl(tag).href);});
- localePanel.append(item);
+ const option=new Option(name,tag,false,tag===siteLocale);option.lang=tag;languageSelect.add(option);
 }
-const currencyMenu=document.createElement('div');currencyMenu.className='currency-menu';currencyMenu.hidden=true;
-const currencyToggle=document.createElement('button');currencyToggle.type='button';currencyToggle.textContent=tr('Валюта');
+languageSelect.add(new Option(tr('Валюта')+'…','currency-settings'));
+languageSelect.addEventListener('change',()=>{
+ if(languageSelect.value==='currency-settings'){
+  languageSelect.value=siteLocale;localePanel.hidden=false;localePanel.scrollTop=0;currencyBack.focus();return;
+ }
+ const tag=languageSelect.value;
+ try{localStorage.setItem('supertable.language',tag);}catch{}
+ location.replace(languageUrl(tag).href);
+});
+languageSelect.addEventListener('pointerdown',()=>{localePanel.hidden=true;});
+const currencyMenu=document.createElement('div');currencyMenu.className='currency-menu';
 const currencyBack=document.createElement('button');currencyBack.type='button';currencyBack.textContent=tr('Назад');
 const currencyList=document.createElement('div');currencyList.className='currency-list';
 const currencyNames=new Intl.DisplayNames([siteLocale],{type:'currency'});
@@ -53,21 +60,17 @@ for(const code of [...new Set([currencyCode,...supportedCurrencies])].sort()){
   setDisplayCurrency(code);
   currencyList.querySelectorAll('button').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.currency===code)));
   document.dispatchEvent(new Event('currency-changed'));
-  localeMenu.open=false;localeToggle.focus();
+  localePanel.hidden=true;languageSelect.focus();
  });
  currencyList.append(item);
 }
-function showCurrencyList(show){
- for(const child of localePanel.children)child.hidden=show;
- currencyMenu.hidden=!show;localePanel.scrollTop=0;
- (show?currencyBack:currencyToggle).focus();
-}
-currencyToggle.addEventListener('click',()=>showCurrencyList(true));
-currencyBack.addEventListener('click',()=>showCurrencyList(false));
-localeMenu.addEventListener('toggle',()=>{if(!localeMenu.open){for(const child of localePanel.children)child.hidden=false;currencyMenu.hidden=true;}});
-currencyMenu.append(currencyBack,currencyList);localePanel.append(currencyToggle,currencyMenu);localeMenu.append(localeToggle,localePanel);languageSelect.replaceWith(localeMenu);
-document.addEventListener('click',event=>{if(!localeMenu.contains(event.target))localeMenu.open=false;});
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&localeMenu.open){localeMenu.open=false;localeToggle.focus();}});
+currencyBack.addEventListener('click',()=>{
+ localePanel.hidden=true;languageSelect.focus();
+ try{languageSelect.showPicker?.();}catch{}
+});
+currencyMenu.append(currencyBack,currencyList);localePanel.append(currencyMenu);localeMenu.append(localePanel);
+document.addEventListener('click',event=>{if(!localeMenu.contains(event.target))localePanel.hidden=true;});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!localePanel.hidden){localePanel.hidden=true;languageSelect.focus();}});
 // Translate the static shell before the app renders any personal records.
 for (const el of document.querySelectorAll("title,.brand span,#gate button,#install-app,#install-title,noscript")) {
   for (const node of el.childNodes) if (node.nodeType === Node.TEXT_NODE) node.textContent = tr(node.textContent);

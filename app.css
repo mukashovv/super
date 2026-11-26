@@ -371,8 +371,6 @@ body.month-open {
 @media(pointer:coarse){[data-open-debt]:focus,[data-open-debt]:focus-visible{outline:none}[data-open-debt]{-webkit-tap-highlight-color:transparent}}
 
 .locale-menu{position:relative;flex:none}
-.locale-menu>summary{cursor:pointer;list-style:none;padding:7px 10px}
-.locale-menu>summary::-webkit-details-marker{display:none}
 .locale-panel{position:absolute;right:0;top:calc(100% + 7px);z-index:100;width:min(290px,85vw);max-height:70vh;overflow:auto;padding:8px;border:1px solid var(--rule);border-radius:12px;background:white;box-shadow:0 8px 28px #0002}
 .locale-panel button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:9px 12px;font-size:.9rem;border-radius:6px;font-weight:400}
 .locale-panel button:hover,.locale-panel button[aria-pressed=true]{background:var(--wash)}
