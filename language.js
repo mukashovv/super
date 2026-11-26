@@ -50,16 +50,22 @@ function showCurrencies(){
  for(const code of [...new Set([currencyCode,...codes])].sort()){
   const item=document.createElement('button'); item.type='button'; item.dataset.currency=code; item.setAttribute('role','option'); item.setAttribute('aria-selected',String(code===currencyCode));
   item.textContent=code+' · '+(code==='KGS'&&siteLocale==='ru'?'Кыргызский сом':names.of(code));
-  item.addEventListener('click',()=>{setDisplayCurrency(code);currencyDialog.close();languageSelect.value=siteLocale;document.dispatchEvent(new Event('currency-changed'));});
+  item.addEventListener('click',()=>{if(code!==currencyCode)document.dispatchEvent(new Event('currency-changing'));setDisplayCurrency(code);currencyDialog.close();languageSelect.value=siteLocale;languageSelect.blur();document.activeElement?.blur();document.dispatchEvent(new Event('currency-changed'));});
   currencyList.append(item);
  }
  currencyDialog.showModal();
- search.focus();search.oninput=()=>{const query=search.value.trim().toLocaleLowerCase(siteLocale);for(const item of currencyList.children)item.hidden=!item.textContent.toLocaleLowerCase(siteLocale).includes(query);};
+ positionCurrencyDialog();
+ currencyDialog.querySelector('[data-currency-back]').focus({preventScroll:true});
+ search.oninput=()=>{const query=search.value.trim().toLocaleLowerCase(siteLocale);for(const item of currencyList.children)item.hidden=!item.textContent.toLocaleLowerCase(siteLocale).includes(query);currencyList.scrollTop=0;};
 }
+function positionCurrencyDialog(){if(!currencyDialog.open||!window.visualViewport)return;currencyDialog.style.setProperty('--currency-view-top',window.visualViewport.offsetTop+'px');currencyDialog.style.setProperty('--currency-view-height',window.visualViewport.height+'px');}
+window.visualViewport?.addEventListener('resize',positionCurrencyDialog);
+window.visualViewport?.addEventListener('scroll',positionCurrencyDialog);
+currencyDialog.addEventListener('toggle',positionCurrencyDialog);
 showLanguages();
 languageSelect.addEventListener('change',()=>{
  const value=languageSelect.value;
- if(value==='currency-settings'){languageSelect.value=siteLocale;showCurrencies();return;}
+ if(value==='currency-settings'){languageSelect.value=siteLocale;languageSelect.blur();setTimeout(showCurrencies,0);return;}
  try{localStorage.setItem('supertable.language',value);}catch{}
  location.replace(languageUrl(value).href);
 });

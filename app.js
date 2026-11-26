@@ -776,4 +776,6 @@ async function init(){
 }
 init();
 
-document.addEventListener('currency-changed',()=>{if(book){document.body.classList.add('currency-transition');render();requestAnimationFrame(()=>{requestAnimationFrame(()=>{document.body.classList.remove('currency-transition');document.body.classList.add('currency-updated');setTimeout(()=>document.body.classList.remove('currency-updated'),450);});});}});
+let currencyIsChanging=false;
+document.addEventListener('currency-changing',()=>{currencyIsChanging=!!book;if(currencyIsChanging)document.body.classList.add('currency-transition');});
+document.addEventListener('currency-changed',()=>{if(!book)return;const delay=currencyIsChanging && !matchMedia('(prefers-reduced-motion: reduce)').matches?220:0;setTimeout(()=>{document.body.classList.remove('currency-transition');render();if(delay){document.body.classList.add('currency-updated');setTimeout(()=>document.body.classList.remove('currency-updated'),340);}currencyIsChanging=false;},delay);});

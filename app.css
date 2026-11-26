@@ -382,20 +382,22 @@ body.month-open {
 .session-loading .welcome{opacity:0;animation:loading-welcome .15s ease .6s forwards}
 @keyframes loading-welcome{to{opacity:1}}
 #language{max-width:min(45vw,210px)}
-.currency-dialog{width:min(92vw,360px);max-height:min(78vh,620px);padding:0;border:1px solid var(--rule);border-radius:14px;background:white;color:var(--ink);box-shadow:0 18px 55px #0003}
+.currency-dialog{box-sizing:border-box;width:min(92vw,360px);max-height:min(78vh,620px);padding:0;border:1px solid var(--rule);border-radius:14px;background:white;color:var(--ink);box-shadow:0 18px 55px #0003}
+.currency-dialog[open]{display:flex;flex-direction:column}
 .currency-dialog::backdrop{background:#20231f66;backdrop-filter:blur(3px)}
 .currency-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--rule);position:sticky;top:0;background:white}
 .currency-dialog-head h2{font-size:1.1rem;margin:0}
-.currency-search{display:block;width:calc(100% - 28px);margin:12px 14px 4px;padding:10px 12px;border:1px solid var(--rule);border-radius:9px;font:inherit;background:white;color:var(--ink)}
+.currency-search{box-sizing:border-box;display:block;flex:none;width:calc(100% - 28px);min-width:0;margin:12px 14px 4px;padding:10px 12px;border:1px solid var(--rule);border-radius:9px;font:inherit;background:white;color:var(--ink)}
 .currency-dialog-head button{padding:7px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--wash);font-size:.88rem}
-.currency-dialog-list{display:grid;gap:2px;padding:8px;max-height:calc(min(78vh,620px) - 120px);overflow:auto}
+.currency-dialog-list{display:grid;gap:2px;padding:8px;min-height:0;overflow:auto;overscroll-behavior:contain}
+.currency-dialog-list [hidden]{display:none}
 .currency-dialog-list button{padding:10px 12px;text-align:left;border:0;border-radius:8px;background:transparent;font-size:.9rem}
 .currency-dialog-list button:hover,.currency-dialog-list button[aria-selected=true]{background:var(--wash)}
 .currency-dialog-list button[aria-selected=true]{font-weight:600}
-@media(max-width:640px){.currency-dialog{width:calc(100vw - 28px);max-height:calc(100svh - 34px);margin:auto}.currency-dialog-list{max-height:calc(100svh - 105px)}.currency-dialog-head{padding:13px 14px}}
+@media(max-width:640px){.currency-dialog{position:fixed;top:calc(var(--currency-view-top,0px) + 12px);left:50%;transform:translateX(-50%);width:calc(100vw - 28px);max-height:calc(var(--currency-view-height,100dvh) - 24px);margin:0}.currency-dialog-head{padding:13px 14px}}
 .currency-transition .content{overflow:hidden}
-.currency-transition .sheet-number,.currency-transition .summary-card dd,.currency-transition .stat-value{animation:currency-out .24s ease-in both}
-.currency-updated .sheet-number,.currency-updated .summary-card dd,.currency-updated .stat-value{animation:currency-in .32s ease-out both}
+.currency-transition .sheet-number,.currency-transition .sheet-totals dd,.currency-transition .stats strong,.currency-transition .debt-card strong,.currency-transition .big-money,.currency-transition .table-wrap td,.currency-transition .payments b{animation:currency-out .22s ease-in both}
+.currency-updated .sheet-number,.currency-updated .sheet-totals dd,.currency-updated .stats strong,.currency-updated .debt-card strong,.currency-updated .big-money,.currency-updated .table-wrap td,.currency-updated .payments b{animation:currency-in .32s ease-out both}
 @keyframes currency-out{to{opacity:0;transform:translateX(-14px)}}
 @keyframes currency-in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
-@media(prefers-reduced-motion:reduce){.currency-transition .sheet-number,.currency-transition .summary-card dd,.currency-transition .stat-value,.currency-updated .sheet-number,.currency-updated .summary-card dd,.currency-updated .stat-value{animation:none}}
+@media(prefers-reduced-motion:reduce){.currency-transition .content *,.currency-updated .content *{animation:none}}
