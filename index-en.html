@@ -2,6 +2,15 @@
 <html lang="en">
 <head>
 <script>document.documentElement.classList.add("session-loading")</script>
+<script>
+try {
+  const id = JSON.parse(localStorage.getItem('super-table.auth.v1'))?.user?.id;
+  if (id && localStorage.getItem('st.lock.' + id)) {
+    document.documentElement.classList.add('pin-start');
+    window.pinStartupAccount = id;
+  }
+} catch {}
+</script>
 <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/+esm">
 <meta charset="utf-8">
 <link rel="canonical" href="https://supertable.mukashov.com/">

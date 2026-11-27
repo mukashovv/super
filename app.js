@@ -91,17 +91,17 @@ function renderGate(step){
  box.querySelector("input,button")?.focus({preventScroll:true});
 }
 function home(){document.body.classList.remove("month-open","workbook-open");memberPage=[];memberOffset=0;book=null;view="month";main.innerHTML=welcome;accountBox.innerHTML="";gate="start";if(dialog.open)dialog.close();}
-async function workspace(local=false){
+async function workspace(local=false,earlyUnlock=null){
  if(workspaceOpening)return workspaceOpening;
  workspaceOpening=(async()=>{
-   const unlocked=!local && F.userId && await appLock.beforeOpen();
-   if(unlocked)main.style.visibility='hidden';
+   const unlocked=!local && F.userId && await (earlyUnlock || appLock.beforeOpen());
+   if(unlocked)document.documentElement.classList.add('pin-wait');
    try{
    book=local?F.startLocal():await F.load();
    month=book.paid?F.monthKey():book.trial;
    if(!book.access_locked&&!book.months[month])await createMonth(month);
    view="month";year=month.slice(0,4);compare=month;render();if(book.access_locked)await upgrade();else if(!unlocked)showAccessWelcome();
-   }finally{if(unlocked)main.style.removeProperty('visibility');}
+   }finally{document.documentElement.classList.remove('pin-wait');}
  })();
  try{await workspaceOpening;}finally{workspaceOpening=null;}
 }
@@ -767,28 +767,34 @@ function rollover(){
 }
 setInterval(rollover,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)rollover();});
 async function init(){
- if(!F.configured){try{if(sessionStorage.getItem("st-preview-open")==="1")await workspace(true);}catch{home();}return;}
+ if(!F.configured){document.documentElement.classList.remove('pin-start');try{if(sessionStorage.getItem("st-preview-open")==="1")await workspace(true);}catch{home();}return;}
  try{
    if(siteLocale!==pageLanguage)return;
    const fragment=new URLSearchParams(location.hash.slice(1));
    const recovery=fragment.get("type")==="recovery";
    const failed=fragment.has("error") || new URLSearchParams(location.search).has("error");
    const token=recovery?fragment.get("access_token"):null;
+   const candidate=window.pinStartupAccount;
+   window.pinStartupAccount=null;
+   const early=!recovery&&!failed&&candidate?appLock.beforeOpen(candidate):null;
    const signedIn=await F.openSession(token);
+   if(early && signedIn?.id!==candidate)appLock.cancelStartup();
    if(recovery || failed){
      home();
      if(recovery && token && signedIn && !failed)renderGate("new-password");
      else {renderGate("reset");hint(tr("Ссылка недействительна или устарела. Запросите новую."));}
-   }else if(signedIn)await workspace();
+   }else if(signedIn)await workspace(false,signedIn.id===candidate?early:null);
    F.observeSession(user=>{if(book && !F.local){home();if(user)run(()=>workspace());}});
- }catch{home();$("#gate").insertAdjacentHTML("beforeend",("<p class=\"error\" role=\"alert\">"+tr("Не удалось подключиться к облачной таблице")+".</p>")+button("retry-cloud",tr("Повторить подключение"),"text-btn"));}
+ }catch{appLock.cancelStartup();home();$("#gate").insertAdjacentHTML("beforeend",("<p class=\"error\" role=\"alert\">"+tr("Не удалось подключиться к облачной таблице")+".</p>")+button("retry-cloud",tr("Повторить подключение"),"text-btn"));}
+ finally{document.documentElement.classList.remove('pin-start','pin-wait');}
 }
 const appLock = (() => {
  const panel=document.createElement('dialog');
  panel.className='pin-panel';
  panel.setAttribute('aria-labelledby','pin-title');
  document.body.append(panel);
- const key=()=> 'st.lock.'+F.userId;
+ let startupId=null;
+ const key=()=> 'st.lock.'+(startupId||F.userId);
  const read=()=>JSON.parse(localStorage.getItem(key())||'null');
  const save=settings=>localStorage.setItem(key(),JSON.stringify(settings));
  const bytes=n=>crypto.getRandomValues(new Uint8Array(n));
@@ -803,6 +809,8 @@ const appLock = (() => {
  }
  panel.addEventListener('cancel',event=>{if(locked)event.preventDefault();});
  function close(){
+   if(resume)document.documentElement.classList.add('pin-wait');
+   startupId=null;
    locked=false;document.documentElement.classList.remove('pin-locked');
    panel.close();lastActive=Date.now();resume?.(true);resume=null;
  }
@@ -902,7 +910,7 @@ const appLock = (() => {
    if(book&&event.data===F.userId)lock(false);
  };
  function lock(broadcast=true){
-   if(locked||!F.userId||F.local||!read())return;
+   if(locked||!(startupId||F.userId)||F.local||!read())return;
    locked=true;document.documentElement.classList.add('pin-locked');
    if(broadcast)lockChannel?.postMessage(F.userId);
    panel.close();challenge(close,true);
@@ -945,7 +953,8 @@ const appLock = (() => {
  function activity(){if(!locked)lastActive=Date.now();}
  for(const type of ['keydown','pointerdown','scroll'])document.addEventListener(type,activity,{capture:true,passive:true});
  setInterval(()=>{if(book&&!F.local&&!locked&&Date.now()-lastActive>=(read()?.minutes??Infinity)*60000)lock();},1000);
- return {attachMenu,beforeOpen(){if(!read())return;return new Promise(resolve=>{resume=resolve;lock();});}};
+ return {attachMenu,cancelStartup(){if(startupId)close();document.documentElement.classList.remove('pin-wait');},
+   beforeOpen(id=null){startupId=id;if(!read()){startupId=null;return;}return new Promise(resolve=>{resume=resolve;lock();});}};
 })();
 init();
 

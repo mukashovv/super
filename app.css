@@ -420,6 +420,12 @@ body.month-open {
 .pin-panel label,.pin-panel form,.pin-actions{display:grid;gap:8px}
 .pin-actions{margin-top:10px}
 .pin-panel input{box-sizing:border-box}
+.pin-start #main,.pin-wait #main{visibility:hidden}
+.pin-panel #pin-title:focus{outline:none;box-shadow:none}
+.pin-wait body::after{content:"1 · 2 · 3";position:fixed;top:50%;left:50%;display:grid;place-items:center;width:64px;height:64px;border:2px solid var(--rule);border-top-color:#617d68;border-radius:50%;color:var(--soft);font-size:.8rem;opacity:0;pointer-events:none;animation:pin-load-appear .15s .45s forwards,pin-load-spin 2s linear infinite}
+@keyframes pin-load-appear{to{opacity:1}}
+@keyframes pin-load-spin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.pin-wait body::after{transform:translate(-50%,-50%);animation:pin-load-appear .15s .45s forwards}}
 .pin-panel.pin-phone[open]{inset:0;margin:0;width:100%;height:100dvh;max-width:none;max-height:none;padding: max(20px,env(safe-area-inset-top)) 20px max(20px,env(safe-area-inset-bottom));border:0;border-radius:0;background:white;color:#222;display:flex;flex-direction:column;align-items:center;overflow:auto;text-align:center;color-scheme:light}
 .pin-phone h2{margin:auto 0 0;font-size:1.65rem}
 .pin-phone h2::before{content:"";display:block;width:32px;height:36px;margin:0 auto 14px;background:center/contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 36' fill='none' stroke='%23617d68' stroke-width='2.5'%3E%3Crect x='4' y='14' width='24' height='18' rx='4'/%3E%3Cpath d='M9 14V9a7 7 0 0 1 14 0v5m-7 7v5'/%3E%3C/svg%3E")}
