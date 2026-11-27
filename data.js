@@ -188,5 +188,5 @@ const Finance = (() => {
   async function grantMember(member,years){return rpc("st_grant_member",{p_member:member,p_years:years});}
   return {regional:async(name,args={})=>{await connect();return rpc("st_regional_"+name,args);}, claimAccessNotice:()=>rpc("st_claim_access_notice",{}), configured, requestReset, updatePassword, fullAccess, members, grantMember, startLocal, load, openSession, observeSession, authenticate, leave, save, deleteDebt,
     monthKey,dateKey,dateOf,nextMonth,emptyMonth,totals,allocated,balance,installments,calendarPayments,dueForPeriod,
-    get local(){return local;},get email(){return account?.email || "";}};
+    get local(){return local;},get userId(){return account?.id;},get email(){return account?.email || "";}};
 })();

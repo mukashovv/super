@@ -409,5 +409,16 @@ body.month-open {
 .currency-transition .sheet-number,.currency-transition .sheet-totals dd,.currency-transition .stats strong,.currency-transition .debt-card strong,.currency-transition .big-money,.currency-transition .table-wrap td,.currency-transition .payments b{animation:currency-out .22s ease-in both}
 .currency-updated .sheet-number,.currency-updated .sheet-totals dd,.currency-updated .stats strong,.currency-updated .debt-card strong,.currency-updated .big-money,.currency-updated .table-wrap td,.currency-updated .payments b{animation:currency-in .32s ease-out both}
 @keyframes currency-out{to{opacity:0;transform:translateX(-14px)}}
+.email-menu{position:relative;display:inline-flex;min-width:0}
+.mast .email-menu .account-label,.month-open .mast .email-menu .account-label{display:block;cursor:pointer}
+.mast .mast-actions:has(#install-app:not([hidden])) .email-menu .account-label{display:block}
+.email-menu>button{position:absolute;top:100%;right:0;z-index:20;background:white;color:var(--ink);padding:9px 14px;border:1px solid var(--rule);border-radius:8px;box-shadow:0 6px 18px #0002}
+.pin-locked body>:not(.pin-panel){visibility:hidden!important}
+.pin-panel{width:min(360px,calc(100vw - 32px));box-sizing:border-box}
+.pin-panel::backdrop{background:#fafaf8}
+.pin-panel h2{margin:0 0 18px}
+.pin-panel label,.pin-panel form,.pin-actions{display:grid;gap:8px}
+.pin-actions{margin-top:10px}
+.pin-panel input{box-sizing:border-box}
 @keyframes currency-in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){.currency-transition .content *,.currency-updated .content *{animation:none}}
