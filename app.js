@@ -94,11 +94,14 @@ function home(){document.body.classList.remove("month-open","workbook-open");mem
 async function workspace(local=false){
  if(workspaceOpening)return workspaceOpening;
  workspaceOpening=(async()=>{
-   if(!local && F.userId)await appLock.beforeOpen();
+   const unlocked=!local && F.userId && await appLock.beforeOpen();
+   if(unlocked)main.style.visibility='hidden';
+   try{
    book=local?F.startLocal():await F.load();
    month=book.paid?F.monthKey():book.trial;
    if(!book.access_locked&&!book.months[month])await createMonth(month);
-   view="month";year=month.slice(0,4);compare=month;render();if(book.access_locked)await upgrade();else showAccessWelcome();
+   view="month";year=month.slice(0,4);compare=month;render();if(book.access_locked)await upgrade();else if(!unlocked)showAccessWelcome();
+   }finally{if(unlocked)main.style.removeProperty('visibility');}
  })();
  try{await workspaceOpening;}finally{workspaceOpening=null;}
 }
@@ -801,7 +804,7 @@ const appLock = (() => {
  panel.addEventListener('cancel',event=>{if(locked)event.preventDefault();});
  function close(){
    locked=false;document.documentElement.classList.remove('pin-locked');
-   panel.close();lastActive=Date.now();resume?.();resume=null;
+   panel.close();lastActive=Date.now();resume?.(true);resume=null;
  }
  async function digest(pin,salt){
    const material=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveBits']);
@@ -875,7 +878,10 @@ const appLock = (() => {
      if(key==='⌫')b.setAttribute('aria-label','Удалить цифру');
      b.onclick=()=>press(key);pad.append(b);
    }
-   paint();pad.firstElementChild.focus({preventScroll:true});
+   paint();
+   const title=panel.querySelector('#pin-title');
+   title.tabIndex=-1;
+   title.focus({preventScroll:true});
  }
  async function device(enroll){
    const s=read(),salt=enroll?bytes(32):decode(s.device.salt);
